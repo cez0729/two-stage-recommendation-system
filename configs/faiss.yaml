@@ -1,0 +1,22 @@
+seed: 42
+
+data:
+  interactions_path: data/processed/video_games_2018/interactions.parquet
+  item_vectors_path: artifacts/video_games_2018/retrieval/final/two_tower_v3_item_vectors.npy
+  item_ids_path: artifacts/video_games_2018/retrieval/final/two_tower_v3_item_ids.npy
+
+model:
+  checkpoint_path: models/video_games_2018/two_tower_v3_logq.pt
+
+benchmark:
+  k: 100
+  correctness_users: 100
+  single_repetitions: 200
+  batch_size: 128
+  batch_repetitions: 30
+
+outputs:
+  index_path: artifacts/video_games_2018/faiss/item_flat.index
+  item_ids_path: artifacts/video_games_2018/faiss/faiss_item_ids.npy
+  metadata_path: artifacts/video_games_2018/faiss/index_metadata.json
+  benchmark_path: results/video_games_2018/faiss_benchmark.json

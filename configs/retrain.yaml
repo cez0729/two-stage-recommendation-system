@@ -1,0 +1,33 @@
+seed: 42
+
+version_prefix: recsys
+serving_config: configs/serving.yaml
+data_manifest_path: artifacts/video_games_2018/data_manifest.json
+
+promotion:
+  thresholds:
+    two_tower_recall@100:
+      minimum: 0.0951
+      tolerance: 0.0005
+    candidate_recall@200:
+      minimum: 0.2100
+      tolerance: 0.0010
+    lambdarank_ndcg@10:
+      minimum: 0.0299
+      tolerance: 0.0005
+
+stages:
+  - name: split
+    command: [python, -m, recsys.data.split, --config, configs/data.yaml]
+  - name: itemcf
+    command: [python, -m, recsys.retrieval.itemcf, --config, configs/itemcf.yaml]
+  - name: two_tower
+    command: [python, -m, recsys.retrieval.train, --config, configs/two_tower_v3_final.yaml]
+  - name: faiss
+    command: [python, -m, recsys.retrieval.faiss_index, --config, configs/faiss.yaml]
+  - name: ranker
+    command: [python, -m, recsys.ranking.pipeline, --config, configs/ranker.yaml]
+  - name: ranker_eval
+    command: [python, -m, recsys.ranking.evaluate, --config, configs/ranker.yaml]
+  - name: serving_manifest
+    command: [python, scripts/build_serving_artifacts.py]

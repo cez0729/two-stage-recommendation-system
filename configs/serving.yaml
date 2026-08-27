@@ -1,0 +1,21 @@
+data:
+  interactions_path: data/processed/video_games_2018/interactions.parquet
+  items_path: data/processed/video_games_2018/items.parquet
+
+serving:
+  version: v1
+  current_pointer: artifacts/versions/current.json
+  history_splits: [retrieval_train, rank_train, validation]
+  two_tower_checkpoint: models/video_games_2018/two_tower_v3_logq.pt
+  faiss_index_path: artifacts/video_games_2018/faiss/item_flat.index
+  faiss_item_ids_path: artifacts/video_games_2018/faiss/faiss_item_ids.npy
+  ranker_path: models/video_games_2018/ranker.txt
+  two_tower_candidates: 100
+  itemcf_candidates: 100
+  popularity_candidates: 20
+  pool_size: 200
+  rrf_constant: 60
+  itemcf:
+    max_history: 50
+    top_neighbors: 200
+    recency_decay: 0.9

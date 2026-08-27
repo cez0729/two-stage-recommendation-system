@@ -1,0 +1,17 @@
+model:
+  name: itemcf
+  max_history: 50
+  top_neighbors: 200
+  recency_decay: 0.9
+
+evaluation:
+  data_path: data/processed/video_games_2018/interactions.parquet
+  data_manifest_path: artifacts/video_games_2018/data_manifest.json
+  results_dir: results/video_games_2018/baselines
+  splits: [validation, test]
+  ks: [10, 20, 50, 100]
+  bootstrap_samples: 2000
+  seed: 42
+
+artifacts:
+  neighbors_path: artifacts/video_games_2018/retrieval/item_neighbors.parquet

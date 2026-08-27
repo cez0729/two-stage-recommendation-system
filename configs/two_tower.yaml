@@ -1,0 +1,35 @@
+seed: 42
+
+data:
+  interactions_path: data/processed/video_games_2018/interactions.parquet
+  data_manifest_path: artifacts/video_games_2018/data_manifest.json
+
+model:
+  embedding_dim: 64
+  hidden_dim: 128
+  dropout: 0.1
+  history_length: 20
+  temperature: 0.07
+
+training:
+  batch_size: 512
+  learning_rate: 0.001
+  weight_decay: 0.00001
+  max_epochs: 8
+  early_stopping_patience: 2
+  num_workers: 0
+  device: cpu
+
+evaluation:
+  ks: [10, 20, 50, 100]
+  batch_size: 256
+  bootstrap_samples: 2000
+
+outputs:
+  model_path: models/video_games_2018/two_tower_best.pt
+  item_vectors_path: artifacts/video_games_2018/retrieval/two_tower_item_vectors.npy
+  item_ids_path: artifacts/video_games_2018/retrieval/two_tower_item_ids.npy
+  metrics_path: results/video_games_2018/two_tower_metrics.json
+  per_user_dir: results/video_games_2018/two_tower_per_user
+  runs_dir: runs/video_games_2018
+

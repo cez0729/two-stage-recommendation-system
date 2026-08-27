@@ -1,0 +1,36 @@
+project_seed: 42
+
+dataset:
+  name: amazon_reviews_2018_5core
+  category: Video_Games
+  review_url: https://mcauleylab.ucsd.edu/public_datasets/data/amazon_v2/categoryFilesSmall/Video_Games_5.json.gz
+  metadata_url: https://mcauleylab.ucsd.edu/public_datasets/data/amazon_v2/metaFiles2/meta_Video_Games.json.gz
+  review_filename: Video_Games_5.json.gz
+  metadata_filename: meta_Video_Games.json.gz
+  review_schema:
+    user_id: reviewerID
+    item_id: asin
+    timestamp: unixReviewTime
+    rating: overall
+    timestamp_unit: s
+  metadata_schema:
+    item_id: asin
+    title: title
+    category: main_cat
+    price: price
+    avg_rating: null
+    rating_number: null
+  min_rating: 3.0
+  deduplicate_user_item: true
+  min_user_interactions: 5
+  min_item_interactions: 5
+  max_interactions: 1500000
+
+paths:
+  raw_dir: data/raw/video_games_2018
+  interim_dir: data/interim/video_games_2018
+  processed_dir: data/processed/video_games_2018
+  artifacts_dir: artifacts/video_games_2018
+
+split:
+  same_timestamp_policy: select_one_per_target_timestamp

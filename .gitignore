@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.egg-info/
+
+# Secrets and local settings
+.env
+
+# Raw and generated data
+data/raw/*
+data/interim/*
+data/processed/*
+artifacts/*
+models/*
+runs/*
+
+# Keep directory explanations/placeholders
+!data/**/.gitkeep
+!artifacts/README.md
+!models/README.md
+!runs/README.md
+

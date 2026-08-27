@@ -1,0 +1,58 @@
+{
+  "title": "Recommendation System Serving",
+  "uid": "recsys-serving",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Requests",
+      "gridPos": {"h": 5, "w": 6, "x": 0, "y": 0},
+      "targets": [{"expr": "recsys_request_count", "refId": "A"}]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Errors",
+      "gridPos": {"h": 5, "w": 6, "x": 6, "y": 0},
+      "targets": [{"expr": "recsys_error_count", "refId": "A"}]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Request rate",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 5},
+      "targets": [{"expr": "rate(recsys_request_count[5m])", "refId": "A"}]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Latency quantiles",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 5},
+      "targets": [
+        {"expr": "recsys_request_latency_seconds{quantile=\"0.5\"}", "refId": "P50"},
+        {"expr": "recsys_request_latency_seconds{quantile=\"0.95\"}", "refId": "P95"}
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Cache and fallback",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 13},
+      "targets": [
+        {"expr": "recsys_cache_hit_count", "refId": "Hits"},
+        {"expr": "recsys_cache_miss_count", "refId": "Misses"},
+        {"expr": "recsys_fallback_count", "refId": "Fallback"}
+      ]
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "Model version",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 13},
+      "targets": [{"expr": "recsys_model_version_info", "refId": "A"}]
+    }
+  ]
+}

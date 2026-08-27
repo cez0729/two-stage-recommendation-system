@@ -1,0 +1,57 @@
+services:
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  api:
+    build: .
+    environment:
+      RECSYS_CONFIG: configs/serving.yaml
+      REDIS_URL: redis://redis:6379/0
+      FEEDBACK_DB_PATH: /app/data/feedback/events.db
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./artifacts:/app/artifacts:ro
+      - ./models:/app/models:ro
+      - ./data:/app/data:ro
+      - feedback_data:/app/data/feedback
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      api:
+        condition: service_healthy
+  grafana:
+    image: grafana/grafana:11.2.0
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      prometheus:
+        condition: service_started
+
+volumes:
+  feedback_data:
+  grafana_data:

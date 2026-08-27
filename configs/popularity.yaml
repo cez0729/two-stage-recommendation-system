@@ -1,0 +1,14 @@
+model:
+  name: popularity
+
+evaluation:
+  data_path: data/processed/video_games_2018/interactions.parquet
+  data_manifest_path: artifacts/video_games_2018/data_manifest.json
+  results_dir: results/video_games_2018/baselines
+  splits: [validation, test]
+  ks: [10, 20, 50, 100]
+  bootstrap_samples: 2000
+  seed: 42
+
+artifacts:
+  popularity_path: artifacts/video_games_2018/retrieval/popularity.parquet

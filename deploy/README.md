@@ -3,6 +3,10 @@
 This is an executable Docker Compose deployment asset for one Ubuntu VM (AWS EC2 or
 GCP Compute Engine). It is not a claim that a remote instance has been deployed.
 
+For provider selection, pricing, asset upload, and SSH tunnel commands, see
+[`CLOUD_VM_GUIDE.md`](CLOUD_VM_GUIDE.md). The recommended first target is an x86 AWS
+Lightsail Linux instance because the repository depends on PyTorch and FAISS.
+
 ## Prerequisites
 
 - Ubuntu 22.04+ VM with at least 4 GB RAM and a security group/firewall allowing TCP 8000.

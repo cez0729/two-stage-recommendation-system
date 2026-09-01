@@ -1,35 +1,44 @@
-name: recsys-ci
+name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  tests:
+  quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install dependencies
-        run: python -m pip install -e ".[dev]"
-      - name: Unit and API tests
-        run: python -m pytest -q
-      - name: Offline parity smoke when frozen artifacts are present
-        shell: bash
+          cache: pip
+      - name: Install CPU PyTorch and project
         run: |
-          if [[ -f models/video_games_2018/two_tower_v3_logq.pt && -f artifacts/video_games_2018/faiss/item_flat.index ]]; then
-            python scripts/check_serving_parity.py --users 20
-          else
-            echo "Frozen model/data artifacts are not tracked in CI; parity smoke skipped."
-          fi
+          python -m pip install --upgrade pip
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.2,<3"
+          python -m pip install -e ".[dev]"
       - name: Lint
-        run: python -m ruff check src tests scripts
+        run: python -m ruff check .
+      - name: Test
+        run: python -m pytest -q
 
   docker-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - name: Build serving image
-        run: docker build -t two-stage-recsys:ci .
+      - uses: docker/setup-buildx-action@v3
+      - name: Build API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: two-stage-recsys:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

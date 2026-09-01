@@ -20,6 +20,18 @@ def test_serving_history_tensor_is_padded() -> None:
     assert lengths.tolist() == [2]
 
 
+def test_unknown_user_trace_reports_fallback() -> None:
+    pipeline = object.__new__(ServingPipeline)
+    pipeline.histories = {}
+    pipeline._popularity_fallback = lambda history, k: []
+    recommendations, trace = pipeline.recommend_with_trace("unknown", 3)
+    assert recommendations == []
+    assert trace["fallback"] is True
+    assert trace["candidate_count"] == 0
+    assert trace["fallback_popularity"] >= 0
+    assert trace["total_pipeline_ms"] >= trace["fallback_popularity"]
+
+
 def test_api_health_with_injected_pipeline() -> None:
     from fastapi.testclient import TestClient
 
@@ -122,3 +134,34 @@ def test_api_metadata_events_and_prometheus(tmp_path) -> None:
     exported = tmp_path / "events.jsonl"
     assert store.export(exported) == 1
     assert '"event_type": "click"' in exported.read_text(encoding="utf-8")
+
+
+def test_api_exports_pipeline_stage_metrics() -> None:
+    from fastapi.testclient import TestClient
+
+    class TracedStubPipeline:
+        catalog_size = 10
+        model_version = "trace-v1"
+        histories = {"known": object()}
+
+        def recommend_with_trace(self, user_id: str, k: int):
+            return [], {
+                "history_prepare": 1.0,
+                "faiss_search": 2.0,
+                "candidate_count": 200,
+                "fallback": False,
+                "total_pipeline_ms": 3.0,
+            }
+
+    client = TestClient(create_app(pipeline=TracedStubPipeline()))
+    response = client.get("/recommend/known?k=3")
+    assert response.status_code == 200
+    metrics = client.get("/metrics").json()
+    assert metrics["stage_latency_ms"]["faiss_search"] == {"p50": 2.0, "p95": 2.0}
+    assert metrics["candidate_count_latest"] == 200
+    prometheus = client.get("/metrics?format=prometheus").text
+    expected_metric = (
+        'recsys_stage_latency_seconds{stage="faiss_search",quantile="0.95"} 0.002000'
+    )
+    assert expected_metric in prometheus
+    assert "recsys_candidate_count 200" in prometheus

@@ -1,0 +1,160 @@
+{
+  "controlled_factors": "Raw and logQ use the same data, architecture, 30 epochs, optimizer, scheduler, batch size, and evaluation; sampling_correction_weight is the only mechanism change.",
+  "created_at_utc": "2026-09-01T02:36:40.632229+00:00",
+  "experiment_id": "phase6_logq_three_seed_ablation_v1",
+  "paired_seed_differences": {
+    "coverage@10": {
+      "all_seeds_positive": false,
+      "mean_logq_minus_raw": -0.30795566089683735,
+      "std_sample": 0.06294966135124304
+    },
+    "ndcg@10": {
+      "all_seeds_positive": true,
+      "mean_logq_minus_raw": 0.008356335533666569,
+      "std_sample": 0.00037648270781818355
+    },
+    "popularity_bias_ratio": {
+      "all_seeds_positive": true,
+      "mean_logq_minus_raw": 1.6848089872791103,
+      "std_sample": 0.16512734714107263
+    },
+    "recall@10": {
+      "all_seeds_positive": true,
+      "mean_logq_minus_raw": 0.01712450945415626,
+      "std_sample": 0.00013484283732045397
+    },
+    "recall@100": {
+      "all_seeds_positive": true,
+      "mean_logq_minus_raw": 0.06831116320948644,
+      "std_sample": 0.0032873271490544364
+    }
+  },
+  "per_seed": [
+    {
+      "coverage@10": 0.99705523234935,
+      "ndcg@10": 0.0033793711786740247,
+      "popularity_bias_ratio": 0.39085059804871547,
+      "recall@10": 0.006982314866724428,
+      "recall@100": 0.0488252382651241,
+      "seed": 42,
+      "variant": "raw"
+    },
+    {
+      "coverage@10": 0.9786683904330963,
+      "ndcg@10": 0.002532567996473604,
+      "popularity_bias_ratio": 0.42362903377407274,
+      "recall@10": 0.005402375006370725,
+      "recall@100": 0.038071454054329545,
+      "seed": 2026,
+      "variant": "raw"
+    },
+    {
+      "coverage@10": 0.9973425267542915,
+      "ndcg@10": 0.003080632601773647,
+      "popularity_bias_ratio": 0.3898626513065814,
+      "recall@10": 0.006829417460883747,
+      "recall@100": 0.05234187859945976,
+      "seed": 3407,
+      "variant": "raw"
+    },
+    {
+      "coverage@10": 0.7401422107304461,
+      "ndcg@10": 0.011305722035070702,
+      "popularity_bias_ratio": 1.9686928034206437,
+      "recall@10": 0.024157790122827583,
+      "recall@100": 0.11477498598440447,
+      "seed": 42,
+      "variant": "logq"
+    },
+    {
+      "coverage@10": 0.6003734827264239,
+      "ndcg@10": 0.011048451191204204,
+      "popularity_bias_ratio": 2.2986167720237267,
+      "recall@10": 0.022628816064420774,
+      "recall@100": 0.11013709800723714,
+      "seed": 2026,
+      "variant": "logq"
+    },
+    {
+      "coverage@10": 0.7086834733893558,
+      "ndcg@10": 0.011707405151646075,
+      "popularity_bias_ratio": 1.99145966952233,
+      "recall@10": 0.023801029509199326,
+      "recall@100": 0.1192599765557311,
+      "seed": 3407,
+      "variant": "logq"
+    }
+  ],
+  "seed_42_provenance": "Reuses previously completed controlled runs with matching settings; other seeds are executed by this Phase 6 orchestrator.",
+  "seeds": [
+    42,
+    2026,
+    3407
+  ],
+  "summary": {
+    "logq": {
+      "coverage@10": {
+        "max": 0.7401422107304461,
+        "mean": 0.6830663889487419,
+        "min": 0.6003734827264239,
+        "std_sample": 0.07332121516582864
+      },
+      "ndcg@10": {
+        "max": 0.011707405151646075,
+        "mean": 0.011353859459306994,
+        "min": 0.011048451191204204,
+        "std_sample": 0.00033210388315192143
+      },
+      "popularity_bias_ratio": {
+        "max": 2.2986167720237267,
+        "mean": 2.0862564149889002,
+        "min": 1.9686928034206437,
+        "std_sample": 0.18426142699434492
+      },
+      "recall@10": {
+        "max": 0.024157790122827583,
+        "mean": 0.023529211898815895,
+        "min": 0.022628816064420774,
+        "std_sample": 0.0007999087621761415
+      },
+      "recall@100": {
+        "max": 0.1192599765557311,
+        "mean": 0.11472402018245757,
+        "min": 0.11013709800723714,
+        "std_sample": 0.00456165281311159
+      }
+    },
+    "raw": {
+      "coverage@10": {
+        "max": 0.9973425267542915,
+        "mean": 0.9910220498455793,
+        "min": 0.9786683904330963,
+        "std_sample": 0.01069954719502183
+      },
+      "ndcg@10": {
+        "max": 0.0033793711786740247,
+        "mean": 0.002997523925640425,
+        "min": 0.002532567996473604,
+        "std_sample": 0.0004294754898508788
+      },
+      "popularity_bias_ratio": {
+        "max": 0.42362903377407274,
+        "mean": 0.4014474277097899,
+        "min": 0.3898626513065814,
+        "std_sample": 0.019216184464783754
+      },
+      "recall@10": {
+        "max": 0.006982314866724428,
+        "mean": 0.006404702444659634,
+        "min": 0.005402375006370725,
+        "std_sample": 0.0008714009549789961
+      },
+      "recall@100": {
+        "max": 0.05234187859945976,
+        "mean": 0.046412856972971143,
+        "min": 0.038071454054329545,
+        "std_sample": 0.007434779203084039
+      }
+    }
+  }
+}

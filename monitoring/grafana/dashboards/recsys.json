@@ -53,6 +53,26 @@
       "title": "Model version",
       "gridPos": {"h": 8, "w": 12, "x": 12, "y": 13},
       "targets": [{"expr": "recsys_model_version_info", "refId": "A"}]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Pipeline stage P95 latency",
+      "gridPos": {"h": 8, "w": 18, "x": 0, "y": 21},
+      "targets": [
+        {
+          "expr": "recsys_stage_latency_seconds{quantile=\"0.95\"}",
+          "legendFormat": "{{stage}}",
+          "refId": "P95"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "stat",
+      "title": "Candidate pool",
+      "gridPos": {"h": 8, "w": 6, "x": 18, "y": 21},
+      "targets": [{"expr": "recsys_candidate_count", "refId": "A"}]
     }
   ]
 }

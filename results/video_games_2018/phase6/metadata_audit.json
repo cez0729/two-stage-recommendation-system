@@ -1,0 +1,226 @@
+{
+  "catalog_items": 14489,
+  "decision": "GO",
+  "decision_rule": {
+    "fine_category_catalog_coverage_min": 0.9,
+    "strict_cold_title_coverage_min": 0.95,
+    "title_catalog_coverage_min": 0.95
+  },
+  "excluded_fields": {
+    "avg_rating": "absent from the formal source and temporally cumulative",
+    "price": "unreliable parsing and possible temporal variation",
+    "rating_number": "absent from the formal source and temporally cumulative"
+  },
+  "fields": {
+    "brand": {
+      "coverage": 0.9898543722824211,
+      "median_characters": 8.0,
+      "top_values": [
+        {
+          "count": 1100,
+          "value": "Electronic Arts"
+        },
+        {
+          "count": 1011,
+          "value": "Nintendo"
+        },
+        {
+          "count": 912,
+          "value": "Activision"
+        },
+        {
+          "count": 657,
+          "value": "Ubisoft"
+        },
+        {
+          "count": 618,
+          "value": "Sony"
+        },
+        {
+          "count": 520,
+          "value": "Microsoft"
+        },
+        {
+          "count": 433,
+          "value": "Sega"
+        },
+        {
+          "count": 345,
+          "value": "Capcom"
+        },
+        {
+          "count": 328,
+          "value": "Square Enix"
+        },
+        {
+          "count": 296,
+          "value": "THQ"
+        }
+      ],
+      "unique_ratio_among_usable": 0.09210709803374703,
+      "unique_values": 1321,
+      "usable_count": 14342
+    },
+    "fine_category": {
+      "coverage": 0.9905445510387191,
+      "median_characters": 51.0,
+      "top_values": [
+        {
+          "count": 1582,
+          "value": "Video Games > PC > Games"
+        },
+        {
+          "count": 952,
+          "value": "Video Games > Retro Gaming & Microconsoles > PlayStation 2 > Games"
+        },
+        {
+          "count": 618,
+          "value": "Video Games > Xbox 360 > Games"
+        },
+        {
+          "count": 511,
+          "value": "Video Games > PlayStation 3 > Games"
+        },
+        {
+          "count": 453,
+          "value": "Video Games > Kids & Family > Nintendo DS > Games"
+        },
+        {
+          "count": 400,
+          "value": "Video Games > Kids & Family > Wii > Games"
+        },
+        {
+          "count": 388,
+          "value": "Video Games > Retro Gaming & Microconsoles > Xbox > Games"
+        },
+        {
+          "count": 334,
+          "value": "Video Games > Retro Gaming & Microconsoles > PlayStation > Games"
+        },
+        {
+          "count": 280,
+          "value": "Video Games > Kids & Family > Xbox 360 > Games"
+        },
+        {
+          "count": 242,
+          "value": "Video Games > PlayStation 4 > Games"
+        }
+      ],
+      "unique_ratio_among_usable": 0.20310758082497213,
+      "unique_values": 2915,
+      "usable_count": 14352
+    },
+    "main_category": {
+      "coverage": 0.07460832355580095,
+      "median_characters": 9.0,
+      "top_values": [
+        {
+          "count": 688,
+          "value": "Computers"
+        },
+        {
+          "count": 158,
+          "value": "All Electronics"
+        },
+        {
+          "count": 110,
+          "value": "Software"
+        },
+        {
+          "count": 33,
+          "value": "Toys & Games"
+        },
+        {
+          "count": 31,
+          "value": "Cell Phones & Accessories"
+        },
+        {
+          "count": 14,
+          "value": "Home Audio & Theater"
+        },
+        {
+          "count": 11,
+          "value": "Sports & Outdoors"
+        },
+        {
+          "count": 7,
+          "value": "Books"
+        },
+        {
+          "count": 7,
+          "value": "Tools & Home Improvement"
+        },
+        {
+          "count": 4,
+          "value": "Movies & TV"
+        }
+      ],
+      "unique_ratio_among_usable": 0.01942645698427382,
+      "unique_values": 21,
+      "usable_count": 1081
+    },
+    "title": {
+      "coverage": 0.999033749741183,
+      "median_characters": 37.0,
+      "top_values": [
+        {
+          "count": 6,
+          "value": "Teenage Mutant Ninja Turtles"
+        },
+        {
+          "count": 6,
+          "value": "Spider-Man"
+        },
+        {
+          "count": 6,
+          "value": "The Simpsons Game"
+        },
+        {
+          "count": 4,
+          "value": "Resident Evil 2"
+        },
+        {
+          "count": 4,
+          "value": "Monopoly"
+        },
+        {
+          "count": 4,
+          "value": "Castlevania"
+        },
+        {
+          "count": 4,
+          "value": "Tony Hawk's Pro Skater 3"
+        },
+        {
+          "count": 4,
+          "value": "Ultimate Spider-Man"
+        },
+        {
+          "count": 4,
+          "value": "Lego Indiana Jones: The Original Adventures"
+        },
+        {
+          "count": 3,
+          "value": "Tomb Raider"
+        }
+      ],
+      "unique_ratio_among_usable": 0.9741623488773747,
+      "unique_values": 14101,
+      "usable_count": 14475
+    }
+  },
+  "ignored_duplicate_raw_records": 3100,
+  "matched_raw_records": 14475,
+  "raw_match_rate": 0.999033749741183,
+  "snapshot_limit": "Metadata is a static public snapshot. Content fields do not use outcomes, but their historical availability time is not independently verified.",
+  "strict_cold": {
+    "coverage": {
+      "brand": 0.9902912621359223,
+      "fine_category": 0.9778085991678225,
+      "main_category": 0.34812760055478503,
+      "title": 1.0
+    },
+    "test_targets": 721,
+    "unique_items": 316
+  }
+}

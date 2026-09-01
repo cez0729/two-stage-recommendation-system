@@ -1,0 +1,29 @@
+{
+  "artifacts": {
+    "checkpoint_sha256": "8baa4e4a428d1abf65a87201241eeb286b88b9c0d78c3f9805dfeaa591140a57",
+    "index_path": "artifacts/video_games_2018/faiss/item_flat.index",
+    "item_ids_path": "artifacts/video_games_2018/faiss/faiss_item_ids.npy",
+    "vectors_sha256": "e585ed5435761204e1e7fa543f290152d4503bf7fe6684222f56fdd0dc173172"
+  },
+  "build_seconds": 0.025774999987334013,
+  "correctness": {
+    "exact_row_match_rate": 1.0,
+    "k": 100,
+    "mean_topk_overlap": 1.0,
+    "reload_identical": true,
+    "users": 100
+  },
+  "embedding_dim": 64,
+  "index_size_bytes": 3564333,
+  "index_type": "IndexFlatIP",
+  "latency_ms": {
+    "batch_p50": 83.43915001023561,
+    "batch_p95": 168.10810003080405,
+    "batch_per_user_p95": 1.3133445314906567,
+    "batch_size": 128,
+    "single_p50": 0.7415000000037253,
+    "single_p95": 2.151985009550116
+  },
+  "metric": "inner_product",
+  "num_items": 13923
+}

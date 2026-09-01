@@ -1,0 +1,73 @@
+{
+  "environment": "local single Uvicorn process; no Redis configured",
+  "method": "closed-loop clients using 100 known users",
+  "warmup_requests": 10,
+  "capacity_claim": "These measurements describe this machine and workload only; they are not a production capacity or SLA claim.",
+  "levels": [
+    {
+      "concurrency": 1,
+      "requests": 100,
+      "successes": 100,
+      "errors": 0,
+      "error_rate": 0.0,
+      "qps": 14.954074020011987,
+      "p50_ms": 65.52415003534406,
+      "p95_ms": 76.5840548556298,
+      "p99_ms": 83.40329512255295,
+      "mean_ms": 66.80335199693218,
+      "wall_seconds": 6.687140899943188
+    },
+    {
+      "concurrency": 5,
+      "requests": 100,
+      "successes": 100,
+      "errors": 0,
+      "error_rate": 0.0,
+      "qps": 12.016225990328255,
+      "p50_ms": 407.34825003892183,
+      "p95_ms": 518.7009199871682,
+      "p99_ms": 579.7879939246926,
+      "mean_ms": 412.7889530104585,
+      "wall_seconds": 8.322080500191078
+    },
+    {
+      "concurrency": 10,
+      "requests": 100,
+      "successes": 100,
+      "errors": 0,
+      "error_rate": 0.0,
+      "qps": 13.946236005017132,
+      "p50_ms": 762.7619000850245,
+      "p95_ms": 1013.4798050392419,
+      "p99_ms": 1098.8210651651027,
+      "mean_ms": 705.5518440087326,
+      "wall_seconds": 7.170393500011414
+    },
+    {
+      "concurrency": 20,
+      "requests": 100,
+      "successes": 100,
+      "errors": 0,
+      "error_rate": 0.0,
+      "qps": 12.634771954021176,
+      "p50_ms": 1589.4579000305384,
+      "p95_ms": 2142.056274949573,
+      "p99_ms": 2281.9627031194977,
+      "mean_ms": 1521.8404639977962,
+      "wall_seconds": 7.9146659998223186
+    },
+    {
+      "concurrency": 50,
+      "requests": 100,
+      "successes": 100,
+      "errors": 0,
+      "error_rate": 0.0,
+      "qps": 11.438469299499006,
+      "p50_ms": 3656.743449973874,
+      "p95_ms": 8303.325034992304,
+      "p99_ms": 8434.388954860624,
+      "mean_ms": 4040.427362008486,
+      "wall_seconds": 8.742428499972448
+    }
+  ]
+}

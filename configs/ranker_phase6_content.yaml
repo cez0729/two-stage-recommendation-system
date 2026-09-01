@@ -1,0 +1,54 @@
+seed: 42
+
+data:
+  interactions_path: data/processed/video_games_2018/interactions.parquet
+  reuse_existing_features: false
+
+retrieval:
+  two_tower_checkpoint: models/video_games_2018/two_tower_v3_logq.pt
+  faiss_index_path: artifacts/video_games_2018/faiss/item_flat.index
+  faiss_item_ids_path: artifacts/video_games_2018/faiss/faiss_item_ids.npy
+  two_tower_candidates: 100
+  itemcf_candidates: 100
+  popularity_candidates: 20
+  content_candidates: 100
+  pool_size: 200
+  rrf_constant: 60
+  itemcf:
+    max_history: 50
+    top_neighbors: 200
+    recency_decay: 0.9
+  content:
+    enabled: true
+    items_path: data/processed/video_games_2018/items_content.parquet
+    vectorizer_path: artifacts/video_games_2018/phase6/tfidf_vectorizer.joblib
+    item_matrix_path: artifacts/video_games_2018/phase6/tfidf_item_matrix.npz
+    item_ids_path: artifacts/video_games_2018/phase6/tfidf_item_ids.npy
+    max_features: 50000
+    min_df: 2
+    ngram_max: 2
+    max_history: 50
+
+model:
+  n_estimators: 500
+  learning_rate: 0.05
+  num_leaves: 31
+  min_child_samples: 30
+  subsample: 0.9
+  colsample_bytree: 0.9
+  reg_lambda: 1.0
+  early_stopping_rounds: 30
+  n_jobs: 8
+
+evaluation:
+  bootstrap_samples: 2000
+
+outputs:
+  feature_dir: artifacts/video_games_2018/ranking_phase6_content
+  model_path: models/video_games_2018/ranker_phase6_content.txt
+  feature_schema_path: artifacts/video_games_2018/ranking_phase6_content/feature_schema.json
+  importance_path: results/video_games_2018/ranker_phase6_content_feature_importance.csv
+  per_user_path: results/video_games_2018/ranker_phase6_content_validation_per_user.parquet
+  metrics_path: results/video_games_2018/ranker_phase6_content_validation_metrics.json
+  test_per_user_path: results/video_games_2018/ranker_phase6_content_test_per_user.parquet
+  final_test_metrics_path: results/video_games_2018/final_test_phase6_content_metrics.json

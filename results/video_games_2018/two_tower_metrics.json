@@ -1,0 +1,174 @@
+{
+  "acceptance": {
+    "gap_to_itemcf": -0.12680291524387136,
+    "itemcf_recall@100": 0.1569746699964324,
+    "meets_popularity_floor": false,
+    "popularity_recall@100": 0.06411497884919219,
+    "two_tower_recall@100": 0.030171754752561033
+  },
+  "artifacts": {
+    "checkpoint": "models/video_games_2018/two_tower_best.pt",
+    "item_ids": "artifacts/video_games_2018/retrieval/two_tower_item_ids.npy",
+    "item_vectors": "artifacts/video_games_2018/retrieval/two_tower_item_vectors.npy"
+  },
+  "best_epoch": 8,
+  "config_sha256": "97f465aae3fe678ed8eddf9d8a97cbfe02460cafc8f8a98d8e9237fcb0ee582f",
+  "created_at_utc": "2026-07-23T07:44:19.061620+00:00",
+  "data_manifest_sha256": "ec4a50519f37c0be8cc7f4f9a9089eb7de856eb1e78885aca2cf35ab398fc938",
+  "device": "cpu",
+  "run_id": "20260723T074212Z_two_tower",
+  "splits": {
+    "test": {
+      "catalog_size": 13923,
+      "cold_target_rate": 0.036746343203710286,
+      "confidence_intervals_95": {
+        "recall@10": {
+          "high": 0.005912033025839662,
+          "low": 0.004026298353804597
+        },
+        "recall@100": {
+          "high": 0.03256714744406503,
+          "low": 0.027827327863003924
+        },
+        "recall@20": {
+          "high": 0.010447989399113195,
+          "low": 0.0077977676978747265
+        },
+        "recall@50": {
+          "high": 0.020438560725753015,
+          "low": 0.01666581723663422
+        }
+      },
+      "evaluation_mode": "full_catalog_exact_dot_product",
+      "metrics": {
+        "coverage@10": 0.9508726567550096,
+        "mrr@10": 0.0014362041641487132,
+        "mrr@100": 0.0021804437803944364,
+        "mrr@20": 0.001722579531952995,
+        "mrr@50": 0.0020166351762802917,
+        "ndcg@10": 0.0022390053625049124,
+        "ndcg@100": 0.007029925178147896,
+        "ndcg@20": 0.003291325950994511,
+        "ndcg@50": 0.005150887165401392,
+        "p50_latency_ms_batch_amortized": 0.07848281256883638,
+        "p95_latency_ms_batch_amortized": 0.12996523446417996,
+        "p95_latency_ms_single_query": 1.467919995775446,
+        "popularity_bias_ratio": 0.6003593812056222,
+        "recall@10": 0.004943682788848682,
+        "recall@100": 0.030171754752561033,
+        "recall@100_given_available": 0.03132275132275132,
+        "recall@10_given_available": 0.005132275132275132,
+        "recall@20": 0.009122878548493961,
+        "recall@20_given_available": 0.00947089947089947,
+        "recall@50": 0.01855155190866928,
+        "recall@50_given_available": 0.01925925925925926,
+        "recommended_mean_popularity": 15.79351205341216,
+        "target_mean_popularity": 26.306763161918354
+      },
+      "num_users": 19621,
+      "split": "test",
+      "target_catalog_availability": 0.9632536567962897
+    },
+    "validation": {
+      "catalog_size": 13923,
+      "cold_target_rate": 0.021252739411854682,
+      "confidence_intervals_95": {
+        "recall@10": {
+          "high": 0.0056062382141583,
+          "low": 0.0036695377401763417
+        },
+        "recall@100": {
+          "high": 0.03567606136282554,
+          "low": 0.03083431017787065
+        },
+        "recall@20": {
+          "high": 0.009632536567962896,
+          "low": 0.007033280668671322
+        },
+        "recall@50": {
+          "high": 0.02201722644105805,
+          "low": 0.01809285969114724
+        }
+      },
+      "evaluation_mode": "full_catalog_exact_dot_product",
+      "metrics": {
+        "coverage@10": 0.9532428355957768,
+        "mrr@10": 0.001617213659158514,
+        "mrr@100": 0.002405265297254283,
+        "mrr@20": 0.0018527129425815094,
+        "mrr@50": 0.0022180054720308735,
+        "ndcg@10": 0.002312948150859961,
+        "ndcg@100": 0.007660305216947545,
+        "ndcg@20": 0.0032164267499852663,
+        "ndcg@50": 0.005528997358586827,
+        "p50_latency_ms_batch_amortized": 0.07142539061533171,
+        "p95_latency_ms_batch_amortized": 0.09862695310403069,
+        "p95_latency_ms_single_query": 1.3121200172463423,
+        "popularity_bias_ratio": 0.5350390410713095,
+        "recall@10": 0.00463788797716732,
+        "recall@100": 0.03317873706742776,
+        "recall@100_given_available": 0.033899187669235574,
+        "recall@10_given_available": 0.004738596125807124,
+        "recall@20": 0.008307425717343662,
+        "recall@20_given_available": 0.008487815038533639,
+        "recall@50": 0.020029560165129197,
+        "recall@50_given_available": 0.020464486565298895,
+        "recommended_mean_popularity": 15.956357983792875,
+        "target_mean_popularity": 29.822791906630652
+      },
+      "num_users": 19621,
+      "split": "validation",
+      "target_catalog_availability": 0.9787472605881453
+    }
+  },
+  "training_history": [
+    {
+      "epoch": 1,
+      "epoch_seconds": 13.461798899981659,
+      "train_loss": 6.129516578905397,
+      "validation_recall@100": 0.00728810967840579
+    },
+    {
+      "epoch": 2,
+      "epoch_seconds": 14.158235699986108,
+      "train_loss": 6.081462022083318,
+      "validation_recall@100": 0.0066765200550430665
+    },
+    {
+      "epoch": 3,
+      "epoch_seconds": 15.048347599979024,
+      "train_loss": 6.066417411744147,
+      "validation_recall@100": 0.008358391519290556
+    },
+    {
+      "epoch": 4,
+      "epoch_seconds": 14.317619000037666,
+      "train_loss": 6.04155876276748,
+      "validation_recall@100": 0.009785433973803577
+    },
+    {
+      "epoch": 5,
+      "epoch_seconds": 14.923956399958115,
+      "train_loss": 5.991779322773168,
+      "validation_recall@100": 0.016003261811324603
+    },
+    {
+      "epoch": 6,
+      "epoch_seconds": 14.591318199993111,
+      "train_loss": 5.910804902013658,
+      "validation_recall@100": 0.024055858518933795
+    },
+    {
+      "epoch": 7,
+      "epoch_seconds": 13.721350999956485,
+      "train_loss": 5.812363126907009,
+      "validation_recall@100": 0.031191070791498906
+    },
+    {
+      "epoch": 8,
+      "epoch_seconds": 13.221736199979205,
+      "train_loss": 5.70110547860672,
+      "validation_recall@100": 0.03317873706742776
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "config": "configs/serving.yaml",
+  "known_users": 20,
+  "repeats_per_user": 5,
+  "warmup_requests": 10,
+  "measured_requests": 100,
+  "candidate_budget": 200,
+  "candidate_count": {
+    "min": 200,
+    "max": 200,
+    "mean": 200
+  },
+  "total_pipeline": {
+    "mean_ms": 26.328425002284348,
+    "p50_ms": 26.051900000311434,
+    "p95_ms": 31.69019997585565,
+    "p99_ms": 32.998753967694974
+  },
+  "stages": {
+    "history_prepare": {
+      "mean_ms": 0.29099100502207875,
+      "p50_ms": 0.2864999696612358,
+      "p95_ms": 0.35607992904260755,
+      "p99_ms": 0.4169770306907596,
+      "share_of_total_mean_pct": 1.105235140335327
+    },
+    "two_tower_encode": {
+      "mean_ms": 0.6500960025005043,
+      "p50_ms": 0.6506999488919973,
+      "p95_ms": 0.7892398512922227,
+      "p99_ms": 0.8209880790673197,
+      "share_of_total_mean_pct": 2.4691792328789117
+    },
+    "faiss_search": {
+      "mean_ms": 0.6928359903395176,
+      "p50_ms": 0.6285499548539519,
+      "p95_ms": 1.0385148576460776,
+      "p99_ms": 1.3437398686073723,
+      "share_of_total_mean_pct": 2.6315132419786016
+    },
+    "itemcf": {
+      "mean_ms": 1.8077310058288276,
+      "p50_ms": 1.5454500680789351,
+      "p95_ms": 3.213854902423913,
+      "p99_ms": 6.3652921258472,
+      "share_of_total_mean_pct": 6.866081072726464
+    },
+    "popularity": {
+      "mean_ms": 0.17554099904373288,
+      "p50_ms": 0.1674999948590994,
+      "p95_ms": 0.25903509231284255,
+      "p99_ms": 0.33140195766463915,
+      "share_of_total_mean_pct": 0.6667356631796331
+    },
+    "candidate_merge": {
+      "mean_ms": 0.48709798604249954,
+      "p50_ms": 0.48719998449087143,
+      "p95_ms": 0.6916499114595354,
+      "p99_ms": 0.7259858236648143,
+      "share_of_total_mean_pct": 1.8500840289543987
+    },
+    "feature_build": {
+      "mean_ms": 15.175333982333541,
+      "p50_ms": 14.994950033724308,
+      "p95_ms": 19.646964920684695,
+      "p99_ms": 20.75854096794501,
+      "share_of_total_mean_pct": 57.63859395697568
+    },
+    "ranker_predict": {
+      "mean_ms": 4.452949012629688,
+      "p50_ms": 4.413550021126866,
+      "p95_ms": 5.1677800714969635,
+      "p99_ms": 5.904987999238076,
+      "share_of_total_mean_pct": 16.913085428556148
+    },
+    "result_assembly": {
+      "mean_ms": 2.5756969954818487,
+      "p50_ms": 2.7637501480057836,
+      "p95_ms": 3.302249882835895,
+      "p99_ms": 3.494774056598545,
+      "share_of_total_mean_pct": 9.782951297916119
+    }
+  },
+  "stages_by_mean_desc": [
+    "feature_build",
+    "ranker_predict",
+    "result_assembly",
+    "itemcf",
+    "faiss_search",
+    "two_tower_encode",
+    "candidate_merge",
+    "history_prepare",
+    "popularity"
+  ]
+}

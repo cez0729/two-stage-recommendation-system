@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from math import log1p
 from pathlib import Path
+from time import perf_counter
 from typing import Any
 
 import lightgbm as lgb
@@ -14,6 +15,7 @@ import torch
 
 from recsys.config import load_yaml
 from recsys.ranking.pipeline import FEATURE_COLUMNS, _reciprocal_rank, fuse_candidates
+from recsys.retrieval.content import TfidfContentRecommender
 from recsys.retrieval.faiss_index import FaissIndexFlatIP
 from recsys.retrieval.itemcf import ItemCFRecommender
 from recsys.retrieval.popularity import PopularityRecommender
@@ -57,6 +59,17 @@ class ServingPipeline:
             .itertuples(index=False, name=None)
         }
         self.item_rows = pd.read_parquet(config["data"]["items_path"]).set_index("item_idx")
+        content_config = serving.get("content", {})
+        self.content: TfidfContentRecommender | None = None
+        if bool(content_config.get("enabled", False)):
+            content_items = pd.read_parquet(content_config["items_path"])
+            self.content = TfidfContentRecommender.load_artifacts(
+                vectorizer_path=content_config["vectorizer_path"],
+                item_matrix_path=content_config["item_matrix_path"],
+                item_ids_path=content_config["item_ids_path"],
+                items=content_items,
+                max_history=int(content_config.get("max_history", 50)),
+            )
         self.retrieval_train = interactions[interactions["split"] == "retrieval_train"]
         self.popularity = PopularityRecommender().fit(self.retrieval_train)
         itemcf_config = serving["itemcf"]
@@ -93,6 +106,7 @@ class ServingPipeline:
         self.two_tower_candidates = int(serving.get("two_tower_candidates", 100))
         self.itemcf_candidates = int(serving.get("itemcf_candidates", 100))
         self.popularity_candidates = int(serving.get("popularity_candidates", 20))
+        self.content_candidates = int(serving.get("content_candidates", 100))
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> ServingPipeline:
@@ -121,6 +135,8 @@ class ServingPipeline:
         defaults = {
             "two_tower_score": -2.0,
             "two_tower_rank": self.two_tower_candidates + 1,
+            "content_score": 0.0,
+            "content_rank": self.content_candidates + 1,
             "itemcf_score": 0.0,
             "itemcf_rank": self.itemcf_candidates + 1,
         }
@@ -179,34 +195,82 @@ class ServingPipeline:
         self, user_id: str, k: int = 10, as_of: pd.Timestamp | None = None
     ) -> list[Recommendation]:
         """Return deterministic top-k recommendations for a known or unknown user."""
+        recommendations, _ = self.recommend_with_trace(user_id, k, as_of=as_of)
+        return recommendations
+
+    def recommend_with_trace(
+        self, user_id: str, k: int = 10, as_of: pd.Timestamp | None = None
+    ) -> tuple[list[Recommendation], dict[str, float | int | bool]]:
+        """Return recommendations plus per-stage latency without changing ranking behavior."""
+        total_started = perf_counter()
+        stage_latency_ms: dict[str, float] = {}
         if not 1 <= k <= 50:
             raise ValueError("k must be between 1 and 50")
+
+        stage_started = perf_counter()
         history_frame = self.histories.get(str(user_id))
+        stage_latency_ms["history_prepare"] = (perf_counter() - stage_started) * 1000
         if history_frame is None or history_frame.empty:
-            return self._popularity_fallback(set(), k)
+            stage_started = perf_counter()
+            output = self._popularity_fallback(set(), k)
+            stage_latency_ms["fallback_popularity"] = (perf_counter() - stage_started) * 1000
+            trace: dict[str, float | int | bool] = {
+                **stage_latency_ms,
+                "candidate_count": len(output),
+                "fallback": True,
+                "total_pipeline_ms": (perf_counter() - total_started) * 1000,
+            }
+            return output, trace
+
+        stage_started = perf_counter()
         history = history_frame["item_idx"].astype(int).tolist()
         seen = set(history)
         user_idx = self.user_idx_by_id[str(user_id)]
         history_tensor, history_lengths = self._history_tensor(history)
+        stage_latency_ms["history_prepare"] += (perf_counter() - stage_started) * 1000
+
+        stage_started = perf_counter()
         with torch.inference_mode():
             user_vector = self.two_tower.encode_users(
                 torch.tensor([user_idx], dtype=torch.long), history_tensor, history_lengths
             ).numpy()
+        stage_latency_ms["two_tower_encode"] = (perf_counter() - stage_started) * 1000
+
+        stage_started = perf_counter()
         two_ids, two_scores = self.faiss.search(
             user_vector, k=self.two_tower_candidates, seen_item_ids=[seen]
         )
+        stage_latency_ms["faiss_search"] = (perf_counter() - stage_started) * 1000
+
+        stage_started = perf_counter()
         itemcf_candidates = [
             (candidate.item_idx, candidate.score)
             for candidate in self.itemcf.recommend(history, k=self.itemcf_candidates)
         ]
+        stage_latency_ms["itemcf"] = (perf_counter() - stage_started) * 1000
+
+        stage_started = perf_counter()
         popularity_candidates = [
             (candidate.item_idx, candidate.score)
             for candidate in self.popularity.recommend(history, k=self.popularity_candidates)
         ]
+        stage_latency_ms["popularity"] = (perf_counter() - stage_started) * 1000
+
+        stage_started = perf_counter()
+        content_candidates = []
+        if self.content is not None:
+            content_candidates = [
+                (candidate.item_idx, candidate.score)
+                for candidate in self.content.recommend(history, k=self.content_candidates)
+            ]
+        stage_latency_ms["content"] = (perf_counter() - stage_started) * 1000
+
+        stage_started = perf_counter()
         fused = fuse_candidates(
             list(zip(two_ids[0].tolist(), two_scores[0].tolist(), strict=True)),
             itemcf_candidates,
             popularity_candidates,
+            content_candidates if self.content is not None else None,
             pool_size=self.pool_size,
             rrf_constant=self.rrf_constant,
         )
@@ -230,9 +294,19 @@ class ServingPipeline:
                 emitted.add(candidate.item_idx)
                 if len(fused) == self.pool_size:
                     break
+        stage_latency_ms["candidate_merge"] = (perf_counter() - stage_started) * 1000
+
+        candidate_count = len(fused)
+        stage_started = perf_counter()
         features = self._candidate_features(history_frame, fused, as_of=as_of)
+        stage_latency_ms["feature_build"] = (perf_counter() - stage_started) * 1000
+
+        stage_started = perf_counter()
         predictions = self.ranker.predict(features[FEATURE_COLUMNS])
         order = np.argsort(-predictions, kind="stable")
+        stage_latency_ms["ranker_predict"] = (perf_counter() - stage_started) * 1000
+
+        stage_started = perf_counter()
         output = []
         emitted: set[int] = set()
         for position in order:
@@ -257,7 +331,15 @@ class ServingPipeline:
                 seen | {item.item_idx for item in output}, k - len(output)
             )
             output.extend(fallback)
-        return output[:k]
+        output = output[:k]
+        stage_latency_ms["result_assembly"] = (perf_counter() - stage_started) * 1000
+        trace = {
+            **stage_latency_ms,
+            "candidate_count": candidate_count,
+            "fallback": False,
+            "total_pipeline_ms": (perf_counter() - total_started) * 1000,
+        }
+        return output, trace
 
     def recommend_at(
         self, user_id: str, k: int = 10, as_of: pd.Timestamp | None = None

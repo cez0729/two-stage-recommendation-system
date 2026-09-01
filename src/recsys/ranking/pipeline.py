@@ -15,6 +15,7 @@ from lightgbm import LGBMRanker
 
 from recsys.config import load_yaml
 from recsys.evaluation.metrics import bootstrap_mean_ci
+from recsys.retrieval.content import TfidfContentRecommender
 from recsys.retrieval.dataset import EvaluationQueries, build_evaluation_queries
 from recsys.retrieval.faiss_index import FaissIndexFlatIP
 from recsys.retrieval.itemcf import ItemCFRecommender
@@ -26,6 +27,8 @@ from recsys.utils.seed import seed_everything
 FEATURE_COLUMNS = [
     "two_tower_score",
     "two_tower_rank",
+    "content_score",
+    "content_rank",
     "itemcf_score",
     "itemcf_rank",
     "popularity_score",
@@ -59,17 +62,21 @@ def fuse_candidates(
     two_tower: list[tuple[int, float]],
     itemcf: list[tuple[int, float]],
     popularity: list[tuple[int, float]],
+    content: list[tuple[int, float]] | None = None,
     *,
     pool_size: int,
     rrf_constant: int,
 ) -> list[dict[str, float | int]]:
     """Fuse channel rankings with deterministic reciprocal-rank fusion."""
     records: dict[int, dict[str, float | int]] = {}
-    for source, candidates in (
+    channels = [
         ("two_tower", two_tower),
         ("itemcf", itemcf),
         ("popularity", popularity),
-    ):
+    ]
+    if content is not None:
+        channels.append(("content", content))
+    for source, candidates in channels:
         for rank, (item_idx, score) in enumerate(candidates, start=1):
             record = records.setdefault(int(item_idx), {"item_idx": int(item_idx)})
             record[f"{source}_score"] = float(score)
@@ -78,7 +85,7 @@ def fuse_candidates(
     for record in records.values():
         ranks = [
             int(record[f"{source}_rank"])
-            for source in ("two_tower", "itemcf", "popularity")
+            for source in ("two_tower", "itemcf", "popularity", "content")
             if f"{source}_rank" in record
         ]
         record["source_count"] = len(ranks)
@@ -107,6 +114,17 @@ class FeaturePipeline:
             top_neighbors=int(itemcf_config["top_neighbors"]),
             recency_decay=float(itemcf_config["recency_decay"]),
         ).fit(self.retrieval_train)
+        content_config = config["retrieval"].get("content", {})
+        self.content: TfidfContentRecommender | None = None
+        if bool(content_config.get("enabled", False)):
+            self.content = TfidfContentRecommender(
+                max_features=int(content_config.get("max_features", 50_000)),
+                min_df=int(content_config.get("min_df", 2)),
+                ngram_max=int(content_config.get("ngram_max", 2)),
+                max_history=int(content_config.get("max_history", 50)),
+            )
+            content_items = pd.read_parquet(content_config["items_path"])
+            self.content.fit(content_items, self.catalog)
         self.faiss = FaissIndexFlatIP.load(
             config["retrieval"]["faiss_index_path"],
             config["retrieval"]["faiss_item_ids_path"],
@@ -192,10 +210,20 @@ class FeaturePipeline:
                 (candidate.item_idx, candidate.score)
                 for candidate in self.popularity.recommend(history, k=popularity_k)
             ]
+            content_candidates = []
+            if self.content is not None:
+                content_candidates = [
+                    (candidate.item_idx, candidate.score)
+                    for candidate in self.content.recommend(
+                        history,
+                        k=int(retrieval_config.get("content_candidates", 100)),
+                    )
+                ]
             fused = fuse_candidates(
                 list(zip(two_tower_ids[row].tolist(), two_tower_scores[row].tolist(), strict=True)),
                 itemcf_candidates,
                 popularity_candidates,
+                content_candidates if self.content is not None else None,
                 pool_size=pool_size,
                 rrf_constant=int(retrieval_config["rrf_constant"]),
             )
@@ -236,6 +264,8 @@ class FeaturePipeline:
             defaults = {
                 "two_tower_score": -2.0,
                 "two_tower_rank": two_tower_k + 1,
+                "content_score": 0.0,
+                "content_rank": int(retrieval_config.get("content_candidates", 100)) + 1,
                 "itemcf_score": 0.0,
                 "itemcf_rank": itemcf_k + 1,
             }
@@ -244,11 +274,13 @@ class FeaturePipeline:
                     candidate_frame[column] = default
                 else:
                     candidate_frame[column] = candidate_frame[column].fillna(default)
-            candidate_frame["popularity_score"] = candidate_frame["item_idx"].map(
-                self.popularity_score
+            # Content retrieval can surface metadata-visible cold items that have
+            # no interaction history, so their popularity features are undefined.
+            candidate_frame["popularity_score"] = (
+                candidate_frame["item_idx"].map(self.popularity_score).fillna(0.0)
             )
-            candidate_frame["popularity_rank"] = candidate_frame["item_idx"].map(
-                self.popularity_rank
+            candidate_frame["popularity_rank"] = (
+                candidate_frame["item_idx"].map(self.popularity_rank).fillna(len(self.catalog) + 1)
             )
             candidate_frame["user_history_length"] = len(history_frame)
             candidate_frame["user_mean_rating"] = float(history_frame["rating"].mean())
@@ -260,7 +292,9 @@ class FeaturePipeline:
             )
             candidate_frame["item_popularity_log"] = candidate_frame["popularity_score"]
             item_stats = self.item_stats.reindex(candidate_ids)
-            candidate_frame["item_mean_rating"] = item_stats["item_mean_rating"].to_numpy()
+            candidate_frame["item_mean_rating"] = (
+                item_stats["item_mean_rating"].fillna(0.0).to_numpy()
+            )
             candidate_frame["item_rating_std"] = (
                 item_stats["item_rating_std"].fillna(0.0).to_numpy()
             )

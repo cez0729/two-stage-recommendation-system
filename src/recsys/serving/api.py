@@ -20,6 +20,7 @@ from recsys.serving.events import SQLiteFeedbackStore
 from recsys.serving.pipeline import ServingPipeline
 
 LOGGER = logging.getLogger("recsys.serving")
+TRACE_METADATA = {"candidate_count", "fallback", "total_pipeline_ms"}
 
 
 class FeedbackEvent(BaseModel):
@@ -36,14 +37,18 @@ class FeedbackEvent(BaseModel):
     simulated: bool = True
 
 
-def _prometheus(metrics: dict[str, Any], model_version: str) -> str:
-    values = metrics["latency_ms"]
+def _percentiles(values: list[float]) -> tuple[float, float]:
     if values:
         ordered = sorted(values)
         p50 = ordered[int(0.50 * (len(ordered) - 1))] / 1000.0
         p95 = ordered[int(0.95 * (len(ordered) - 1))] / 1000.0
     else:
         p50 = p95 = 0.0
+    return p50, p95
+
+
+def _prometheus(metrics: dict[str, Any], model_version: str) -> str:
+    p50, p95 = _percentiles(metrics["latency_ms"])
     escaped_version = model_version.replace("\\", "\\\\").replace('"', '\\"')
     lines = [
         "# HELP recsys_request_count Total recommendation requests.",
@@ -63,9 +68,28 @@ def _prometheus(metrics: dict[str, Any], model_version: str) -> str:
         "# TYPE recsys_request_latency_seconds gauge",
         f'recsys_request_latency_seconds{{quantile="0.5"}} {p50:.6f}',
         f'recsys_request_latency_seconds{{quantile="0.95"}} {p95:.6f}',
+        "# HELP recsys_stage_latency_seconds Recommendation pipeline stage latency.",
+        "# TYPE recsys_stage_latency_seconds gauge",
+    ]
+    for stage, values in sorted(metrics["stage_latency_ms"].items()):
+        stage_p50, stage_p95 = _percentiles(values)
+        lines.extend(
+            [
+                f'recsys_stage_latency_seconds{{stage="{stage}",quantile="0.5"}} '
+                f"{stage_p50:.6f}",
+                f'recsys_stage_latency_seconds{{stage="{stage}",quantile="0.95"}} '
+                f"{stage_p95:.6f}",
+            ]
+        )
+    candidate_values = metrics["candidate_count"]
+    latest_candidate_count = candidate_values[-1] if candidate_values else 0
+    lines.extend([
+        "# HELP recsys_candidate_count Candidate pool size of the latest traced request.",
+        "# TYPE recsys_candidate_count gauge",
+        f"recsys_candidate_count {latest_candidate_count}",
         "# TYPE recsys_model_version_info gauge",
         f'recsys_model_version_info{{version="{escaped_version}"}} 1',
-    ]
+    ])
     return "\n".join(lines) + "\n"
 
 
@@ -104,6 +128,8 @@ def create_app(
         "fallback_count": 0,
         "recommendation_count": 0,
         "latency_ms": [],
+        "stage_latency_ms": {},
+        "candidate_count": [],
     }
 
     @app.get("/health")
@@ -147,11 +173,23 @@ def create_app(
                 return cached
             app.state.metrics["cache_miss"] += 1
         try:
-            recommendations = [
-                item.__dict__ for item in active_pipeline.recommend(user_id, k)
-            ]
+            trace: dict[str, float | int | bool] = {}
+            traced_recommend = getattr(active_pipeline, "recommend_with_trace", None)
+            if callable(traced_recommend):
+                recommendation_items, trace = traced_recommend(user_id, k)
+            else:
+                recommendation_items = active_pipeline.recommend(user_id, k)
+            recommendations = [item.__dict__ for item in recommendation_items]
             known_histories = getattr(active_pipeline, "histories", None)
-            is_fallback = known_histories is not None and str(user_id) not in known_histories
+            inferred_fallback = known_histories is not None and str(user_id) not in known_histories
+            is_fallback = bool(trace.get("fallback", inferred_fallback))
+            for stage, value in trace.items():
+                if stage not in TRACE_METADATA:
+                    app.state.metrics["stage_latency_ms"].setdefault(stage, []).append(
+                        float(value)
+                    )
+            if "candidate_count" in trace:
+                app.state.metrics["candidate_count"].append(int(trace["candidate_count"]))
             app.state.metrics["fallback_count"] += int(is_fallback)
             app.state.metrics["recommendation_count"] += len(recommendations)
             result: dict[str, Any] = {
@@ -177,7 +215,15 @@ def create_app(
             app.state.metrics["latency_ms"].append(elapsed)
             LOGGER.info(json.dumps({"event": "recommend", "request_id": request_id,
                                     "user_id": user_id, "k": k, "cache_hit": False,
-                                    "latency_ms": elapsed}))
+                                    "latency_ms": elapsed,
+                                    "stage_latency_ms": {
+                                        key: value for key, value in trace.items()
+                                        if key not in TRACE_METADATA
+                                    } if "trace" in locals() else {},
+                                    "candidate_count": trace.get("candidate_count")
+                                    if "trace" in locals() else None,
+                                    "fallback": trace.get("fallback")
+                                    if "trace" in locals() else None}))
 
     @app.post("/events")
     def events(event: FeedbackEvent) -> dict[str, Any]:
@@ -197,13 +243,15 @@ def create_app(
         active_pipeline = app.state.pipeline
         model_version = str(getattr(active_pipeline, "model_version", "v1"))
         current = app.state.metrics
-        values = current["latency_ms"]
-        if values:
-            values_sorted = sorted(values)
-            p50 = values_sorted[int(0.50 * (len(values_sorted) - 1))]
-            p95 = values_sorted[int(0.95 * (len(values_sorted) - 1))]
-        else:
-            p50 = p95 = 0.0
+        p50_seconds, p95_seconds = _percentiles(current["latency_ms"])
+        stage_latency = {}
+        for stage, values in sorted(current["stage_latency_ms"].items()):
+            stage_p50_seconds, stage_p95_seconds = _percentiles(values)
+            stage_latency[stage] = {
+                "p50": stage_p50_seconds * 1000.0,
+                "p95": stage_p95_seconds * 1000.0,
+            }
+        candidate_values = current["candidate_count"]
         if format == "prometheus":
             return PlainTextResponse(_prometheus(current, model_version))
         return {
@@ -213,8 +261,10 @@ def create_app(
             "cache_miss": current["cache_miss"],
             "fallback_count": current["fallback_count"],
             "recommendation_count": current["recommendation_count"],
-            "latency_ms_p50": p50,
-            "latency_ms_p95": p95,
+            "latency_ms_p50": p50_seconds * 1000.0,
+            "latency_ms_p95": p95_seconds * 1000.0,
+            "stage_latency_ms": stage_latency,
+            "candidate_count_latest": candidate_values[-1] if candidate_values else 0,
             "model_version": model_version,
         }
 

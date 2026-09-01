@@ -5,21 +5,49 @@ __pycache__/
 .ruff_cache/
 .venv/
 *.egg-info/
+.coverage
+htmlcov/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
 
 # Secrets and local settings
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Build and release archives
+build/
+dist/
+*.tar.gz
+*.zip
 
 # Raw and generated data
 data/raw/*
 data/interim/*
 data/processed/*
+data/feedback/*
 artifacts/*
 models/*
 runs/*
+
+# Keep compact research evidence, not row-level evaluation exports or QA renders
+results/**/*.parquet
+reports/qa/
+reports/rendered_final_report/
+reports/next_phase_spec_extracted.txt
+reports/final_research_report_zh.pdf
+two_stage_recommender_codex_spec_zh.docx
 
 # Keep directory explanations/placeholders
 !data/**/.gitkeep
 !artifacts/README.md
 !models/README.md
 !runs/README.md
-

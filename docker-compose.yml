@@ -17,7 +17,7 @@ services:
     volumes:
       - ./artifacts:/app/artifacts:ro
       - ./models:/app/models:ro
-      - ./data:/app/data:ro
+      - ./data/processed:/app/data/processed:ro
       - feedback_data:/app/data/feedback
     depends_on:
       redis:
@@ -32,7 +32,7 @@ services:
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
     depends_on:
       api:
         condition: service_healthy
@@ -47,7 +47,7 @@ services:
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       prometheus:
         condition: service_started

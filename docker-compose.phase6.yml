@@ -1,0 +1,33 @@
+services:
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    environment:
+      RECSYS_CONFIG: configs/serving_phase6_content.yaml
+      REDIS_URL: redis://redis:6379/0
+      FEEDBACK_DB_PATH: /app/data/feedback/events.db
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./artifacts:/app/artifacts:ro
+      - ./models:/app/models:ro
+      - ./data/processed:/app/data/processed:ro
+      - feedback_data_phase6:/app/data/feedback
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  feedback_data_phase6:

@@ -1,0 +1,54 @@
+{
+  "acceptance": {
+    "ndcg@10_delta": 0.01208512814121502,
+    "ndcg@10_not_worse": true
+  },
+  "candidate_recall@200": 0.20997910402120176,
+  "features": [
+    "two_tower_score",
+    "two_tower_rank",
+    "itemcf_score",
+    "itemcf_rank",
+    "popularity_score",
+    "popularity_rank",
+    "source_count",
+    "rrf_score",
+    "best_source_rank",
+    "user_history_length",
+    "user_mean_rating",
+    "user_rating_std",
+    "days_since_last_action",
+    "item_popularity_log",
+    "item_mean_rating",
+    "item_rating_std"
+  ],
+  "final": true,
+  "lambdarank_metrics": {
+    "candidate_recall@200": 0.20997910402120176,
+    "mrr@10": 0.02185462126341796,
+    "mrr@20": 0.023990079295942743,
+    "mrr@5": 0.01927441686628272,
+    "ndcg@10": 0.029924401917378413,
+    "ndcg@20": 0.03780880227987136,
+    "ndcg@5": 0.02358887396062951,
+    "recall@10": 0.05657204016105193,
+    "recall@20": 0.08796697416033841,
+    "recall@5": 0.036797309005657204
+  },
+  "model_path": "models/video_games_2018/ranker.txt",
+  "retrieval_order_metrics": {
+    "candidate_recall@200": 0.20997910402120176,
+    "mrr@10": 0.012365557472840485,
+    "mrr@20": 0.013714006057595481,
+    "mrr@5": 0.010538028982552705,
+    "ndcg@10": 0.017839273776163393,
+    "ndcg@20": 0.022758669636840312,
+    "ndcg@5": 0.013378017726273507,
+    "recall@10": 0.03598185617450691,
+    "recall@20": 0.05545079251822027,
+    "recall@5": 0.022119158044951837
+  },
+  "retrieved_queries": 4120,
+  "split": "test",
+  "total_queries": 19621
+}

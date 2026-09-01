@@ -1,0 +1,37 @@
+seed: 42
+
+data:
+  interactions_path: data/processed/video_games_2018/interactions.parquet
+  items_path: data/processed/video_games_2018/items.parquet
+  raw_metadata_path: data/raw/video_games_2018/meta_Video_Games.json.gz
+  content_items_path: data/processed/video_games_2018/items_content.parquet
+
+content:
+  max_features: 50000
+  min_df: 2
+  ngram_max: 2
+  max_history: 50
+  batch_size: 256
+
+evaluation:
+  splits: [validation, test]
+  retrieval_k: 200
+  report_k: 100
+  rrf_constant: 60
+  bootstrap_samples: 5000
+
+global_temporal:
+  validation_cutoff: "2016-01-01T00:00:00Z"
+  final_cutoff: "2017-01-01T00:00:00Z"
+  rationale: >-
+    Dates were fixed from the interaction-time distribution before running metrics:
+    2016-01-01 is near the 80th percentile and 2017-01-01 creates a later untouched period.
+
+outputs:
+  metadata_audit: results/video_games_2018/phase6/metadata_audit.json
+  baseline_manifest: artifacts/video_games_2018/phase6/baseline_v1_manifest.json
+  results_dir: results/video_games_2018/phase6
+  vectorizer_path: artifacts/video_games_2018/phase6/tfidf_vectorizer.joblib
+  item_matrix_path: artifacts/video_games_2018/phase6/tfidf_item_matrix.npz
+  item_ids_path: artifacts/video_games_2018/phase6/tfidf_item_ids.npy
+  global_temporal_results: results/video_games_2018/phase6/global_temporal_experiment.json

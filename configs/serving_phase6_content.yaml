@@ -1,0 +1,29 @@
+data:
+  interactions_path: data/processed/video_games_2018/interactions.parquet
+  items_path: data/processed/video_games_2018/items.parquet
+
+serving:
+  version: recsys_phase6_content_v1
+  current_pointer: artifacts/versions/phase6_content_pointer.json
+  history_splits: [retrieval_train, rank_train, validation]
+  two_tower_checkpoint: artifacts/versions/recsys_phase6_content_v1/two_tower_v3_logq.pt
+  faiss_index_path: artifacts/versions/recsys_phase6_content_v1/item_flat.index
+  faiss_item_ids_path: artifacts/versions/recsys_phase6_content_v1/faiss_item_ids.npy
+  ranker_path: artifacts/versions/recsys_phase6_content_v1/ranker_phase6_content.txt
+  two_tower_candidates: 100
+  itemcf_candidates: 100
+  popularity_candidates: 20
+  content_candidates: 100
+  pool_size: 200
+  rrf_constant: 60
+  content:
+    enabled: true
+    items_path: data/processed/video_games_2018/items_content.parquet
+    vectorizer_path: artifacts/versions/recsys_phase6_content_v1/tfidf_vectorizer.joblib
+    item_matrix_path: artifacts/versions/recsys_phase6_content_v1/tfidf_item_matrix.npz
+    item_ids_path: artifacts/versions/recsys_phase6_content_v1/tfidf_item_ids.npy
+    max_history: 50
+  itemcf:
+    max_history: 50
+    top_neighbors: 200
+    recency_decay: 0.9

@@ -38,6 +38,9 @@ proxy in front of these ports before exposing them to the public internet.
 
 ## Operational limits
 
-The current benchmark is offline/local: P50 175.19 ms, P95 191.49 ms, 5.68 QPS. No
-production traffic, online A/B lift, CTR, conversion, or GMV claim is made. Docker
-deployment must be verified on the target VM and recorded separately.
+The 2026-09-01 local rerun measured P50 26.59 ms, P95 30.48 ms, and 37.24 QPS with
+the 200-candidate pool unchanged. A 20-user direct profile measured P95 31.69 ms and
+identified feature construction as 57.64% of mean pipeline latency. These are local
+measurements, not a production SLA. No production traffic, online A/B lift, CTR,
+conversion, or GMV claim is made. Docker deployment must be verified on the target VM
+and recorded separately.

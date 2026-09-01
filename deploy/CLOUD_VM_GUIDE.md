@@ -7,7 +7,8 @@
 页面当前列出的 Linux/Unix IPv4 套餐中，4 GB 内存、2 vCPU、80 GB SSD 为
 24 USD/月；8 GB 内存、2 vCPU、160 GB SSD 为 44 USD/月。这个项目建议先选
 4 GB 套餐做 smoke test；如果加载模型和 Grafana 后内存不足，再升到 8 GB。
-Lightsail 是固定月费套餐，适合短期展示，使用完应停止或删除实例，避免继续计费。
+Lightsail 是按小时计费、封顶到套餐月费的服务，适合短期展示。停止状态仍然计费，
+使用完必须删除实例，并清理无用快照和未绑定的静态 IP。
 
 注册入口：[AWS account sign up](https://aws.amazon.com/resources/create-account/)
 
@@ -64,5 +65,6 @@ ARM 实例。本项目在本机做了 PyPI 兼容性探测：`faiss-cpu` 有 ARM
 ## 费用和安全
 
 - 先设置云厂商预算告警；不要把银行卡、Access Key、SSH 私钥提交到仓库。
-- 测试完成后执行 `docker compose down`，并在云控制台停止或删除实例。
+- 测试完成后执行 `docker compose down`。项目不再需要在线展示时，应在云控制台删除实例；
+  仅停止实例不会停止 Lightsail 计费。
 - 本项目没有真实线上流量、CTR、转化率或 GMV 结论；云主机只用于展示可运行的工程闭环。

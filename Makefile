@@ -1,4 +1,4 @@
-.PHONY: install lint test smoke download clean split baselines faiss ranker ranker-test api feedback-export retrain-dry-run demo
+.PHONY: install lint test smoke download clean split baselines faiss ranker ranker-test api feedback-export retrain-dry-run release-bundle demo
 
 install:
 	python -m pip install -e ".[dev]"
@@ -44,5 +44,8 @@ feedback-export:
 retrain-dry-run:
 	python scripts/retrain.py --config configs/retrain.yaml --dry-run
 
+release-bundle:
+	python scripts/package_github_release.py
+
 demo:
-	@echo "Streamlit demo will be added in a later work package."
+	docker compose -p recsys-phase6 -f docker-compose.phase6.yml up -d --build

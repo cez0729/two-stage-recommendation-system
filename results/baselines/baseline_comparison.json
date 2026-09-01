@@ -1,0 +1,78 @@
+{
+  "bootstrap_samples": 5000,
+  "comparisons": {
+    "test": {
+      "itemcf_minus_popularity": {
+        "ndcg@10": {
+          "ci95_high": 0.06919318903405276,
+          "ci95_low": 0.022720985946264986,
+          "ci_excludes_zero": true,
+          "mean_difference": 0.04430869814690706
+        },
+        "recall@10": {
+          "ci95_high": 0.13131313131313133,
+          "ci95_low": 0.045454545454545456,
+          "ci_excludes_zero": true,
+          "mean_difference": 0.08585858585858586
+        },
+        "recall@100": {
+          "ci95_high": 0.30303030303030304,
+          "ci95_low": 0.16161616161616163,
+          "ci_excludes_zero": true,
+          "mean_difference": 0.23232323232323232
+        },
+        "recall@20": {
+          "ci95_high": 0.16161616161616163,
+          "ci95_low": 0.06565656565656566,
+          "ci_excludes_zero": true,
+          "mean_difference": 0.1111111111111111
+        },
+        "recall@50": {
+          "ci95_high": 0.25252525252525254,
+          "ci95_low": 0.12121212121212122,
+          "ci_excludes_zero": true,
+          "mean_difference": 0.18686868686868688
+        }
+      },
+      "num_paired_users": 198
+    },
+    "validation": {
+      "itemcf_minus_popularity": {
+        "ndcg@10": {
+          "ci95_high": 0.07636476429872036,
+          "ci95_low": 0.020406492584399173,
+          "ci_excludes_zero": true,
+          "mean_difference": 0.04716626833543738
+        },
+        "recall@10": {
+          "ci95_high": 0.13636363636363635,
+          "ci95_low": 0.03535353535353535,
+          "ci_excludes_zero": true,
+          "mean_difference": 0.08585858585858586
+        },
+        "recall@100": {
+          "ci95_high": 0.37373737373737376,
+          "ci95_low": 0.21212121212121213,
+          "ci_excludes_zero": true,
+          "mean_difference": 0.29292929292929293
+        },
+        "recall@20": {
+          "ci95_high": 0.19696969696969696,
+          "ci95_low": 0.07575757575757576,
+          "ci_excludes_zero": true,
+          "mean_difference": 0.13636363636363635
+        },
+        "recall@50": {
+          "ci95_high": 0.29797979797979796,
+          "ci95_low": 0.14646464646464646,
+          "ci_excludes_zero": true,
+          "mean_difference": 0.2222222222222222
+        }
+      },
+      "num_paired_users": 198
+    }
+  },
+  "created_at_utc": "2026-07-22T08:05:45.923794+00:00",
+  "method": "paired non-parametric bootstrap over users",
+  "seed": 42
+}

@@ -2,7 +2,7 @@
 
 ## 1. 一句话结论
 
-项目已经达到“研究生申请/推荐算法实习作品集中的完整研究原型”标准：数据、时间切分、基线、双塔、FAISS、多路候选、LambdaRank、内容召回、冷启动/长尾分析、全局时间稳健性、三随机种子消融和并发压测均有真实运行产物。它不是线上业务系统，因为没有曝光日志、真实线上反馈和 A/B 测试，不能声称 CTR、CVR、GMV 或其他商业收益。
+项目实现了从数据处理、时间切分、多路候选召回、Two-Tower、FAISS 到 LambdaRank 精排和在线 serving 的完整两阶段推荐流水线，并通过冷启动实验、全局时间稳健性实验、多随机种子消融和并发压测进行验证。所有结果均来自公开数据上的离线实验和工程测试，不代表真实线上 CTR、CVR、GMV 或其他商业指标。
 
 ## 2. 数据与评估口径
 
@@ -88,15 +88,17 @@ Phase 6 已落实这一方向，结果见第 11–13 节。它解决了“协同
 
 第一关漏掉的商品，第二关无法救回来。所以现在最值得提升的是候选召回，尤其是没有历史或很少出现的商品，而不是继续微调已经有效的排序器。
 
-## 8. 对申请竞争力的真实价值
+## 8. Engineering Takeaways
 
-价值较大，因为项目展示的不只是调用模型：它包含失败结果、原因诊断、论文方法修复、防测试泄露、完整目录评估、ANN 正确性、排序显著性、冷启动内容召回、跨时间稳健性、随机种子重复性和容量边界。这些内容适合在简历和面试中讲清楚技术判断。
+本项目的主要工程与实验结论包括：
 
-建议简历表述：
+1. Full-catalog evaluation 暴露了 sampled-negative evaluation 可能掩盖的召回问题。
+2. logQ correction 显著改善了 Two-Tower 的召回准确率，但同时降低 Coverage，并增加热门商品偏置。
+3. LambdaRank 能有效改善已召回候选的 Top-K 排序，但无法修复候选阶段遗漏的目标商品。
+4. Content Retrieval 为协同模型无法覆盖的冷启动商品提供了互补召回能力。
+5. 离线与 serving 路径的一致性测试能够降低训练、评估和在线推理实现不一致的风险。
+6. 并发压测表明当前单进程 serving 的主要扩展瓶颈在 CPU 特征构造，而不是 FAISS 检索。
 
-> Built a leakage-aware two-stage recommender on 197K temporally split interactions; corrected in-batch sampling bias to improve full-catalog Two-Tower Recall@100 from 3.02% to 9.51%, verified exact FAISS retrieval at 2.15 ms P95, and improved test NDCG@10 by 67.7% with multi-channel LambdaRank ranking.
-
-不要写“上线后转化率提升”“达到工业生产标准”或与 sampled-negative 论文数字直接比较，因为本项目没有线上实验支持这些结论。
 
 ## 9. 关键产物
 

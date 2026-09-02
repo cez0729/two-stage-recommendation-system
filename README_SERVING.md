@@ -35,7 +35,7 @@ curl "http://127.0.0.1:8000/metrics?format=prometheus"
 
 `k` is restricted to 1..50. Known users use the complete pipeline; unknown users use deterministic Popularity fallback. Recommendations are unique and exclude the configured history. Real serving responses include `request_id`, `model_version`, and `fallback`. Models and indexes load once at application startup.
 
-Phase 6 is available as an isolated serving configuration:
+The content-aware model is available as an isolated serving configuration:
 `configs/serving_phase6_content.yaml`. It loads the TF-IDF content index and
 `ranker_phase6_content.txt` as `recsys_phase6_content_v1`; the original
 `recsys_baseline_v1` snapshot remains untouched for rollback.
@@ -92,8 +92,8 @@ Serving reads `artifacts/versions/current.json` when present; without it, `confi
   concurrency 50, with zero request errors. The service is functionally stable but
   CPU-bound and not horizontally validated.
 - Serving parity: 20/20 fixed users exactly match the saved offline ranker path
-  for both the baseline and Phase 6 content configuration.
-- Phase 6 validation: four-channel ranker NDCG@10 is 0.03848 versus 0.03190
+  for both the baseline and content-aware configuration.
+- Content-aware validation: four-channel ranker NDCG@10 is 0.03848 versus 0.03190
   for retrieval order, with all 18 features reloaded identically.
 
 ## Commands
@@ -108,10 +108,10 @@ python -m pytest -q
 docker compose up -d --build
 ```
 
-The Phase 6 Compose stack was validated on an AWS Ubuntu host at port 8001 while the baseline remained healthy at port 8000. A single request is below the 100 ms reference in the local profile, but P95 breaches that reference under concurrency. Latency remains environment-dependent, so the sequential benchmark, stage profile, and concurrency curve are retained together instead of making a production SLA or capacity claim.
+The content-aware Compose stack was validated on an AWS Ubuntu host port 8001 while the baseline remained healthy at port 8000. A single request is below the 100 ms reference in the local profile, but P95 breaches that reference under concurrency. Latency remains environment-dependent, so the sequential benchmark, stage profile, and concurrency curve are retained together instead of making a production SLA or capacity claim.
 
 For one Ubuntu VM deployment, see `deploy/README.md` and `deploy/bootstrap.sh`. GitHub Actions runs unit/API tests, lint, and a Docker build; artifact-aware parity is run after restoring the release bundle. CI does not retrain the full model.
 
 ## Limitations
 
-The data is public Amazon Reviews and evaluation is offline. There are no exposure logs, online feedback, A/B tests, CTR, conversion, or GMV claims. Phase 6 recovered high-coverage title, brand, and fine-category metadata for content retrieval, but price and aggregate-rating fields remain excluded. Static metadata availability time cannot be independently verified.
+The data is public Amazon Reviews and evaluation is offline. There are no exposure logs, online feedback, A/B tests, CTR, conversion, or GMV claims. The content retrieval pipeline recovered high-coverage title, brand, and fine-category metadata for content retrieval, but price and aggregate-rating fields remain excluded. Static metadata availability time cannot be independently verified.

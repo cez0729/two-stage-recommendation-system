@@ -117,7 +117,7 @@ Phase 6 已落实这一方向，结果见第 11–13 节。它解决了“协同
 
 ## 10. Serving 阶段
 
-按照下一阶段规格，系统已封装为 production-style demo service：
+系统通过 FastAPI、Redis 和 Docker 封装为可复现的在线推理服务：
 
 - `ServingPipeline` 一次加载双塔、FAISS、ItemCF、Popularity、Content 和 LambdaRank，在线流程与离线流程一致。
 - Phase 6 已形成独立版本 `recsys_phase6_content_v1`，已知用户走 `100 + 100 + 20 + 100 -> RRF -> 200 -> 18 特征 -> LambdaRank`；未知用户稳定回退 Popularity。
@@ -202,10 +202,6 @@ Phase 6 已落实这一方向，结果见第 11–13 节。它解决了“协同
 
 **不能声称的业务证据**：没有真实 impression/click/purchase 日志，没有线上对照实验，不能声称 CTR、CVR、GMV 提升，也不能用本地 P95 宣称生产 SLA。
 
-## 16. 最终判断
+## 16. 主要结论
 
-项目最有价值的部分不是模型数量，而是两条完整研究链：第一条从双塔异常低分定位到 in-batch sampling bias，用三随机种子证明 logQ 的准确率收益并揭示多样性代价；第二条从冷启动失败出发，经过元数据 Go/No-Go、无泄露内容基线、固定候选预算、分组显著性和全局 cutoff 稳健性，证明内容通道能修补协同系统的结构性盲区。
-
-面试时可用一句话概括：
-
-> 在 19.8 万条公开 Amazon 交互上构建两阶段推荐系统，完成完整目录评估、采样偏差诊断、FAISS 与 LambdaRank；进一步用高覆盖元数据加入内容召回，使固定 200 候选的测试 Candidate Recall@200 从 20.65% 提升到 24.20%，并把 721 位严格冷用户的 Recall@100 从协同模型的 0% 提升到 14.29%，同时用全局时间切分、三随机种子和并发压测公开验证边界。
+实验得到两组主要结论。第一，Two-Tower 的低召回与 in-batch negative sampling bias 有关；logQ correction 在三个随机种子上稳定提高召回准确率，但同时降低 Coverage 并增加热门商品偏置。第二，Content Retrieval 能覆盖协同模型无法表示的严格冷启动商品，并在固定候选预算下进一步提高整体 Candidate Recall。全局时间切分实验表明这一趋势在更严格的时间协议下仍然存在。

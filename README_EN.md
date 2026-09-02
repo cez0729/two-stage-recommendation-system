@@ -7,9 +7,7 @@ split Amazon Video Games interactions. It combines collaborative, neural, and
 content retrieval with LambdaRank, then serves the frozen pipeline through a
 versioned FastAPI/Redis/Docker stack.
 
-This repository is designed as a reproducible graduate-application and machine
-learning engineering portfolio project. It does not claim production traffic or
-business impact.
+The project focuses on reproducible offline evaluation, leakage-aware feature construction, cold-start retrieval, and consistency between offline ranking and online serving.
 
 ## Highlights
 

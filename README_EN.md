@@ -15,7 +15,7 @@ The project focuses on reproducible offline evaluation, leakage-aware feature co
 | --- | ---: |
 | Evaluated users / items | 19,621 / 14,391 |
 | Four-channel test Candidate Recall@200 | 24.20% |
-| Original three-channel test Candidate Recall@200 | 20.65% |
+| Matched three-channel baseline (content ablation) | 20.65% |
 | Strict-cold test Recall@100 | Content 14.29%, Two-Tower 0% |
 | Strict-cold test users | 721 |
 | Content-aware validation NDCG@10| LambdaRank 3.85%, RRF order 3.19% |
@@ -39,7 +39,7 @@ flowchart LR
     POP --> RRF
     CT --> RRF
     RRF --> C[200 candidates]
-    C --> F[18 leakage-aware features]
+    C --> F[Model-declared 16 or 18 features]
     F --> L[LightGBM LambdaRank]
     L --> API[FastAPI Top-K API]
     API --> REDIS[Redis cache]
@@ -49,6 +49,11 @@ flowchart LR
 
 The Content-aware serving version is `recsys_phase6_content_v1`. The original
 `recsys_baseline_v1` remains an immutable rollback snapshot.
+
+The frozen three-channel baseline uses 16 ranking features; the content-aware
+ranker adds `content_score` and `content_rank` for a total of 18. The 20.65%
+three-channel result is the matched baseline for the content ablation, while
+the frozen baseline V1 test result is reported separately as 21.00%.
 
 ## Research Design
 

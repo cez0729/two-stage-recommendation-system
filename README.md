@@ -11,7 +11,7 @@
 | 实验                         |     结果 |
 | -------------------------- | -----: |
 | 四通道 Candidate Recall@200   | 24.20% |
-| 三通道 Candidate Recall@200   | 20.65% |
+| 内容消融 matched 三通道 Candidate Recall@200 | 20.65% |
 | 严格冷启动 Content Recall@100   | 14.29% |
 | 严格冷启动 Two-Tower Recall@100 |  0.00% |
 
@@ -84,7 +84,7 @@ python -m recsys.ranking.pipeline --config configs/ranker.yaml
 python -m recsys.ranking.evaluate --config configs/ranker.yaml
 ```
 
-FAISS 命令会验证真实用户 Top-100 与 NumPy 精确点积一致。精排训练只使用 `rank_train`，验证集用于早停；最终评估命令只加载冻结模型并读取测试集。
+FAISS 命令会验证真实用户 Top-100 与 NumPy 精确点积一致。精排训练只使用 `rank_train`，验证集用于早停；最终评估命令只加载冻结模型并读取测试集。冻结的三通道 baseline 使用 16 个排序特征；content-aware ranker 新增 `content_score` 和 `content_rank`，共 18 个特征。
 
 主要机器可读结果：
 
@@ -109,7 +109,7 @@ python scripts/load_test_api.py
 关键结果：
 
 - 元数据审计结论为 GO：商品标题/品牌/细类目覆盖率分别为 99.90%/98.99%/99.05%。
-- 测试四通道 Candidate Recall@200 为 24.20%，原三通道为 20.65%。
+- 在统一的内容消融协议下，四通道 Candidate Recall@200 为 24.20%，matched 三通道基线为 20.65%。
 - 严格冷启动测试用户中，内容 Recall@100 为 14.29%，Two-Tower 为 0%。
 - 2017 全局 cutoff 的最终留出集上，内容召回相对协同候选的改进方向仍成立。
 - 三随机种子中 logQ 的 Recall@100 均高于 raw，但 Coverage@10 明显下降且热门偏置上升；报告将其作为精度与多样性的权衡，而不是单向胜利。

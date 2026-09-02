@@ -6,7 +6,7 @@
 
 ```text
 user_id -> history -> Two-Tower/FAISS(100) + ItemCF(100) + Popularity(20) + Content(100)
-        -> RRF dedupe/backfill(200) -> 18 offline features -> LambdaRank -> top-k
+        -> RRF dedupe/backfill(200) -> model-declared 16/18 features -> LambdaRank -> top-k
         -> Redis rec:{model_version}:{user_id}:{k} (TTL 300s) -> FastAPI
         -> request_id/model_version -> SQLite feedback events -> JSONL/CSV export
 
@@ -81,6 +81,10 @@ Serving reads `artifacts/versions/current.json` when present; without it, `confi
 
 - Two-Tower test Recall@100: 9.51%; Popularity: 6.41%; ItemCF: 15.70%.
 - Candidate Recall@200: 21.00% on test.
+  This is the frozen baseline V1 result. The later content ablation regenerates
+  retrieval channels under a shared `retrieval_k=200` protocol; its matched
+  three-channel baseline is 20.65%, so the four-channel 24.20% result is
+  compared against 20.65%, not 21.00%.
 - LambdaRank test NDCG@10: 2.99%, versus RRF 1.78%.
 - FAISS IndexFlatIP exact-match against NumPy: 100%; single-query P95: 2.15 ms.
 - Earlier sequential serving benchmark after warmup: P50 26.59 ms, P95 30.48 ms,
@@ -94,7 +98,8 @@ Serving reads `artifacts/versions/current.json` when present; without it, `confi
 - Serving parity: 20/20 fixed users exactly match the saved offline ranker path
   for both the baseline and content-aware configuration.
 - Content-aware validation: four-channel ranker NDCG@10 is 0.03848 versus 0.03190
-  for retrieval order, with all 18 features reloaded identically.
+  for retrieval order, with all 18 features reloaded identically. The frozen
+  three-channel baseline ranker uses 16 features.
 
 ## Commands
 

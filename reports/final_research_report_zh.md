@@ -48,7 +48,7 @@ Phase 6 用 `42/2026/3407` 三个随机种子做了受控消融：两组使用�
 
 每个查询融合：Two-Tower 100、ItemCF 100、Popularity 20，经 RRF 去重并补齐到 200。`rank_train` 中目标真实进入候选的查询才用于 LambdaRank；验证和测试不强塞正样本。
 
-使用 16 个特征：双塔/ItemCF/热门分数与排名、来源数、RRF、用户历史长度和评分统计、商品训练期热度与评分统计等。原始商品表的 `price`、`avg_rating`、`rating_number` 在正式子集中 100% 为空，因此被删除，没有用常数填充制造“特征数量”。两个可能包含跨用户未来信号的相对商品时间特征也在最终模型中删除。
+冻结的三通道 baseline 使用 16 个特征：双塔/ItemCF/热门分数与排名、来源数、RRF、用户历史长度和评分统计、商品训练期热度与评分统计等。原始商品表的 `price`、`avg_rating`、`rating_number` 在正式子集中 100% 为空，因此被删除，没有用常数填充制造“特征数量”。两个可能包含跨用户未来信号的相对商品时间特征也在最终模型中删除。Content-aware ranker 新增 `content_score` 和 `content_rank`，共 18 个特征。
 
 参数：LambdaRank，学习率 0.05，最多 500 棵树，31 叶，`min_child_samples=30`，行/列采样 0.9，L2 正则 1.0；验证 NDCG@10 早停，最佳迭代 83。
 
@@ -157,10 +157,12 @@ Phase 6 已落实这一方向，结果见第 11–13 节。它解决了“协同
 | Content Recall@100 | 13.89% | 12.76% |
 | Two-Tower Recall@100 | 11.48% | 9.51% |
 | Two-Tower + Content RRF Recall@100 | 16.17% | 14.22% |
-| 原三通道 Candidate Recall@200 | 23.45% | 20.65% |
+| 内容消融 matched 三通道 Candidate Recall@200 | 23.45% | 20.65% |
 | 四通道 Candidate Recall@200 | 27.25% | 24.20% |
 | 原三通道 Overall Recall@100 | 17.37% | 14.76% |
 | 四通道 Overall Recall@100 | 20.43% | 17.59% |
+
+这里的 20.65% 不是前文 frozen baseline V1 的 21.00%。Baseline V1 使用 Two-Tower 100、ItemCF 100、Popularity 20；内容消融实验使用统一 `retrieval_k=200` 重新生成召回通道，因此 24.20% 的直接对照是同协议下的 20.65%。
 
 测试集中，四通道相对三通道新增命中 1,079 位用户，同时损失 382 位用户；Candidate Recall@200 净增 3.55 个百分点。候选预算未增加，所以收益来自候选构成变化，而不是多取候选。
 

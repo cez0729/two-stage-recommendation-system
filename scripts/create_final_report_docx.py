@@ -180,6 +180,9 @@ def main() -> None:
         "可监控的本地 Serving Demo。系统先用 Popularity、ItemCF 和修复后的 Two-Tower "
         "生成候选，再用 FAISS、RRF 和 LightGBM LambdaRank 完成排序。Phase 6 增加 title、brand、"
         "细粒度类目内容召回，并完成冷启动、全局 cutoff、三随机种子和并发实验。"
+        "冻结的三通道 baseline 使用 16 个排序特征；content-aware ranker 新增 content_score "
+        "和 content_rank，"
+        "共 18 个特征。"
         "所有最终数字来自真实运行产物；"
         "项目没有使用线上曝光日志，因此不宣称真实商业收益。"
     )
@@ -191,7 +194,8 @@ def main() -> None:
             "但仍低于 ItemCF 的 15.70%。",
             "多路候选测试 Recall@200 为 21.00%；LambdaRank 将测试 NDCG@10 从 RRF 的 1.78% "
             "提升到 2.99%。",
-            "在候选预算仍为 200 的条件下，加入内容通道后测试 Candidate Recall@200 从 20.65% "
+            "在统一的内容消融协议下，候选预算仍为 200；加入内容通道后测试 "
+            "Candidate Recall@200 从 matched 三通道基线 20.65% "
             "提升到 24.20%；721 位严格冷用户的 Content Recall@100 为 14.29%，Two-Tower 为 0%。",
             "三随机种子都支持 logQ 的准确率收益，但 Coverage@10 从约 99.10% 降到 68.31%，"
             "热门偏置比从 0.40 升到 2.09，必须作为权衡披露。",
@@ -363,7 +367,7 @@ def main() -> None:
                 "分数级 RRF",
             ],
             [
-                "原三通道 CR@200",
+                "内容消融 matched 三通道 CR@200",
                 f"{validation_metrics['three_collaborative']['candidate_recall@200']:.2%}",
                 f"{test_metrics['three_collaborative']['candidate_recall@200']:.2%}",
                 "固定 200 候选",

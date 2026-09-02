@@ -2,11 +2,21 @@
 
 [English](README_EN.md) | 中文
 
-本项目实现了一套可复现的两阶段推荐系统：先从商品库召回候选商品，再使用排序模型生成最终推荐结果。
+本项目实现了一套两阶段推荐系统，基于 Amazon Reviews 2018 Video Games 数据集完成离线训练与评估。
 
-当前状态：除正式数据、按用户时间切分、统一评估器、三路召回、FAISS 和 LightGBM LambdaRank 外，项目还完成了元数据审计、TF-IDF 内容召回、严格冷启动/长尾分析、全局时间截断稳健性实验、三随机种子 logQ 消融和并发压测。四通道固定 200 候选的测试 `Candidate Recall@200=24.20%`，高于原三通道的 `20.65%`；内容召回在 721 位严格冷启动测试用户上的 `Recall@100=14.29%`，协同双塔为 `0%`。完整解释见 `reports/final_research_report_zh.md`。
+候选召回由 Two-Tower + FAISS、ItemCF、Popularity 和 TF-IDF Content Retrieval 组成，并通过 RRF 融合候选；精排阶段使用 LightGBM LambdaRank。
 
-正式实验使用 19,621 位可评估用户、14,391 个商品和 197,597 条严格时间切分交互。早期 `All_Beauty 2023` 结果仅作为小数据管道验证保留。
+## 主要结果
+
+| 实验                         |     结果 |
+| -------------------------- | -----: |
+| 四通道 Candidate Recall@200   | 24.20% |
+| 三通道 Candidate Recall@200   | 20.65% |
+| 严格冷启动 Content Recall@100   | 14.29% |
+| 严格冷启动 Two-Tower Recall@100 |  0.00% |
+
+正式实验包含 19,621 位可评估用户、14,391 个商品和 197,597 条时间切分后的交互记录。详细实验、消融和稳健性分析见 `reports/final_research_report_zh.md`。
+
 
 ## 当前目录说明
 
@@ -28,8 +38,6 @@ python -c "import recsys; print(recsys.__version__)"
 python -m ruff check .
 python -m pytest
 ```
-
-完整需求见 `two_stage_recommender_codex_spec_zh.md`。
 
 ## 数据流程
 

@@ -93,7 +93,7 @@ FAISS 命令会验证真实用户 Top-100 与 NumPy 精确点积一致。精排�
 - `results/video_games_2018/ranking_validation_metrics.json`
 - `results/video_games_2018/final_test_metrics.json`
 
-## Phase 6：内容召回与稳健性实验
+## 内容召回与稳健性实验
 
 ```powershell
 python scripts/freeze_phase6_baseline.py

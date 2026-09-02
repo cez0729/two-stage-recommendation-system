@@ -96,11 +96,11 @@ FAISS 命令会验证真实用户 Top-100 与 NumPy 精确点积一致。精排�
 ## 内容召回与稳健性实验
 
 ```powershell
-python scripts/freeze_phase6_baseline.py
-python scripts/audit_phase6_metadata.py
-python scripts/run_phase6_content.py
-python scripts/run_phase6_global_cutoff.py
-python scripts/run_phase6_logq_ablation.py
+python scripts/freeze_content_baseline.py
+python scripts/audit_content_metadata.py
+python scripts/run_content_retrieval.py
+python scripts/run_global_cutoff_experiment.py
+python scripts/run_logq_ablation.py
 python scripts/load_test_api.py
 ```
 

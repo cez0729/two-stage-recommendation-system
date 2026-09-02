@@ -419,7 +419,7 @@ def run(config_path: str, splits: list[str], user_limit: int | None = None) -> d
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", default="configs/phase6_content.yaml")
+    parser.add_argument("--config", default="configs/content_retrieval.yaml")
     parser.add_argument("--splits", nargs="+", default=["validation", "test"])
     parser.add_argument("--max-users", type=int)
     args = parser.parse_args()

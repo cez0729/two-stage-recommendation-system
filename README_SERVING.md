@@ -36,7 +36,7 @@ curl "http://127.0.0.1:8000/metrics?format=prometheus"
 `k` is restricted to 1..50. Known users use the complete pipeline; unknown users use deterministic Popularity fallback. Recommendations are unique and exclude the configured history. Real serving responses include `request_id`, `model_version`, and `fallback`. Models and indexes load once at application startup.
 
 The content-aware model is available as an isolated serving configuration:
-`configs/serving_phase6_content.yaml`. It loads the TF-IDF content index and
+`configs/serving_content.yaml`. It loads the TF-IDF content index and
 `ranker_phase6_content.txt` as `recsys_phase6_content_v1`; the original
 `recsys_baseline_v1` snapshot remains untouched for rollback.
 
@@ -99,7 +99,7 @@ Serving reads `artifacts/versions/current.json` when present; without it, `confi
 ## Commands
 
 ```powershell
-python scripts/check_serving_parity.py --config configs/serving_phase6_content.yaml --users 20
+python scripts/check_serving_parity.py --config configs/serving_content.yaml --users 20
 python scripts/profile_serving_pipeline.py --users 20 --repeats 5
 python scripts/benchmark_api.py --requests 100
 python scripts/load_test_api.py

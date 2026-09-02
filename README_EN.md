@@ -101,7 +101,7 @@ runtime bundle can be attached to the GitHub Release for
 `recsys_phase6_content_v1`. Extract that archive into the repository root, then:
 
 ```bash
-docker compose -p recsys-phase6 -f docker-compose.phase6.yml up -d --build
+docker compose -p recsys-content -f docker-compose.content.yml up -d --build
 curl http://127.0.0.1:8001/health
 curl "http://127.0.0.1:8001/recommend/A0266076X6KPZ6CCHGVS?k=10"
 curl "http://127.0.0.1:8001/recommend/unknown-user?k=5"

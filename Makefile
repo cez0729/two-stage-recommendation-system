@@ -48,4 +48,4 @@ release-bundle:
 	python scripts/package_github_release.py
 
 demo:
-	docker compose -p recsys-phase6 -f docker-compose.phase6.yml up -d --build
+	docker compose -p recsys-content -f docker-compose.content.yml up -d --build

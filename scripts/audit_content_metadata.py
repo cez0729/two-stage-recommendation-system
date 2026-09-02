@@ -29,7 +29,7 @@ def run(config_path: str) -> dict[str, object]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", default="configs/phase6_content.yaml")
+    parser.add_argument("--config", default="configs/content_retrieval.yaml")
     args = parser.parse_args()
     audit = run(args.config)
     print(f"Metadata decision: {audit['decision']}")

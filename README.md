@@ -93,7 +93,7 @@ FAISS 命令会验证真实用户 Top-100 与 NumPy 精确点积一致。精排�
 - `results/video_games_2018/ranking_validation_metrics.json`
 - `results/video_games_2018/final_test_metrics.json`
 
-## Phase 6：内容召回与稳健性
+## Phase 6：内容召回与稳健性实验
 
 ```powershell
 python scripts/freeze_phase6_baseline.py
@@ -104,7 +104,7 @@ python scripts/run_phase6_logq_ablation.py
 python scripts/load_test_api.py
 ```
 
-Phase 6 保持每位用户 200 个候选不变。内容通道只使用 `title`、规范化 `brand` 和细粒度类目路径，TF-IDF 词表只在召回训练期可见商品上拟合；`price`、`avg_rating`、`rating_number` 仍因不可用而排除。当前“混合”是可解释的分数级 RRF 融合，不是训练过的 Hybrid Item Tower。
+内容召回实验保持每位用户 200 个候选不变。内容通道只使用 `title`、规范化 `brand` 和细粒度类目路径，TF-IDF 词表只在召回训练期可见商品上拟合；`price`、`avg_rating`、`rating_number` 仍因不可用而排除。当前“混合”是可解释的分数级 RRF 融合，不是训练过的 Hybrid Item Tower。
 
 关键结果：
 

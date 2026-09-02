@@ -18,7 +18,7 @@ The project focuses on reproducible offline evaluation, leakage-aware feature co
 | Original three-channel test Candidate Recall@200 | 20.65% |
 | Strict-cold test Recall@100 | Content 14.29%, Two-Tower 0% |
 | Strict-cold test users | 721 |
-| Phase 6 validation NDCG@10 | LambdaRank 3.85%, RRF order 3.19% |
+| Content-aware validation NDCG@10| LambdaRank 3.85%, RRF order 3.19% |
 | Offline/serving Top-10 parity | 20/20 users |
 | Automated tests | 30 passed |
 
@@ -47,7 +47,7 @@ flowchart LR
     API --> FB[SQLite feedback log]
 ```
 
-The Phase 6 serving version is `recsys_phase6_content_v1`. The original
+The Content-aware serving version is `recsys_phase6_content_v1`. The original
 `recsys_baseline_v1` remains an immutable rollback snapshot.
 
 ## Research Design
@@ -131,7 +131,7 @@ are not impressions, clicks, or purchases.
 
 - `recsys_phase6_content_v1` contains checksumed Two-Tower, FAISS, TF-IDF, and
   LambdaRank artifacts.
-- The Phase 6 Docker stack was validated on an AWS Ubuntu host at port 8001
+- The Content-aware Docker stack was validated on an AWS Ubuntu host at port 8001
   while the baseline remained healthy at port 8000.
 - Known-user, unknown-user fallback, invalid-parameter, metrics, Redis, and
   health paths were exercised successfully.

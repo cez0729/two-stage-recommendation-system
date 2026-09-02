@@ -1,4 +1,21 @@
-from recsys.ranking.pipeline import fuse_candidates
+from recsys.ranking.pipeline import (
+    BASE_FEATURE_COLUMNS,
+    CONTENT_FEATURE_COLUMNS,
+    feature_columns_for_config,
+    fuse_candidates,
+)
+
+
+def test_ranker_feature_schema_is_config_aware() -> None:
+    baseline = feature_columns_for_config({"retrieval": {}})
+    content = feature_columns_for_config({"retrieval": {"content": {"enabled": True}}})
+
+    assert baseline == BASE_FEATURE_COLUMNS
+    assert content == CONTENT_FEATURE_COLUMNS
+    assert len(baseline) == 16
+    assert len(content) == 18
+    assert content[:2] == baseline[:2]
+    assert content[4:] == baseline[2:]
 
 
 def test_fuse_candidates_deduplicates_and_rewards_multiple_sources() -> None:

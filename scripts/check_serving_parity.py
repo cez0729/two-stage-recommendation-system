@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 
 from recsys.config import load_yaml
-from recsys.ranking.pipeline import FEATURE_COLUMNS
 from recsys.serving.pipeline import ServingPipeline
 
 
@@ -35,10 +34,14 @@ def check(
         & interactions["user_idx"].isin(sorted(available_users)[:users])
     ].sort_values("user_idx")
     ranker = lgb.Booster(model_file=config["serving"]["ranker_path"])
+    feature_columns = ranker.feature_name()
+    missing_features = [feature for feature in feature_columns if feature not in features.columns]
+    if missing_features:
+        raise ValueError(f"Offline feature frame is missing model features: {missing_features}")
     matched = 0
     for row in test.itertuples(index=False):
         query = features[features["query_id"] == f"test:{row.user_idx}"]
-        predictions = ranker.predict(query[FEATURE_COLUMNS])
+        predictions = ranker.predict(query[feature_columns])
         # Match ServingPipeline's stable descending order for tied LightGBM scores.
         order = np.argsort(-predictions, kind="stable")
         offline_ids = query.iloc[order]["item_idx"].astype(int).head(10).tolist()

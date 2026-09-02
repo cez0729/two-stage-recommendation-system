@@ -14,7 +14,7 @@ import pandas as pd
 import torch
 
 from recsys.config import load_yaml
-from recsys.ranking.pipeline import FEATURE_COLUMNS, _reciprocal_rank, fuse_candidates
+from recsys.ranking.pipeline import _reciprocal_rank, fuse_candidates
 from recsys.retrieval.content import TfidfContentRecommender
 from recsys.retrieval.faiss_index import FaissIndexFlatIP
 from recsys.retrieval.itemcf import ItemCFRecommender
@@ -89,6 +89,7 @@ class ServingPipeline:
         self.two_tower.eval()
         self.max_history = int(checkpoint["model_args"]["max_history"])
         self.ranker = lgb.Booster(model_file=serving["ranker_path"])
+        self.feature_columns = self.ranker.feature_name()
         self.catalog = set(self.faiss.item_ids.astype(int).tolist())
         self.popularity_rank = {
             candidate.item_idx: rank
@@ -168,7 +169,12 @@ class ServingPipeline:
         stats = self.item_stats.reindex(candidate_ids)
         frame["item_mean_rating"] = stats["item_mean_rating"].fillna(0.0).to_numpy()
         frame["item_rating_std"] = stats["item_rating_std"].fillna(0.0).to_numpy()
-        if frame[FEATURE_COLUMNS].isna().any().any():
+        missing_features = [
+            feature for feature in self.feature_columns if feature not in frame.columns
+        ]
+        if missing_features:
+            raise ValueError(f"Serving feature frame is missing model features: {missing_features}")
+        if frame[self.feature_columns].isna().any().any():
             raise ValueError("Serving feature vector contains missing values")
         return frame
 
@@ -302,7 +308,7 @@ class ServingPipeline:
         stage_latency_ms["feature_build"] = (perf_counter() - stage_started) * 1000
 
         stage_started = perf_counter()
-        predictions = self.ranker.predict(features[FEATURE_COLUMNS])
+        predictions = self.ranker.predict(features[self.feature_columns])
         order = np.argsort(-predictions, kind="stable")
         stage_latency_ms["ranker_predict"] = (perf_counter() - stage_started) * 1000
 

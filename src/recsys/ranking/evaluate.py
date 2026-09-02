@@ -8,7 +8,7 @@ from typing import Any
 import lightgbm as lgb
 
 from recsys.config import load_yaml
-from recsys.ranking.pipeline import FEATURE_COLUMNS, FeaturePipeline, _ranking_metrics
+from recsys.ranking.pipeline import FeaturePipeline, _ranking_metrics
 from recsys.utils.io import write_json
 
 
@@ -22,7 +22,11 @@ def evaluate_final_test(config_path: str | Path) -> dict[str, Any]:
     test.frame.to_parquet(feature_path, index=False)
 
     model = lgb.Booster(model_file=output["model_path"])
-    predictions = model.predict(test.frame[FEATURE_COLUMNS])
+    feature_columns = model.feature_name()
+    missing_features = [feature for feature in feature_columns if feature not in test.frame.columns]
+    if missing_features:
+        raise ValueError(f"Test feature frame is missing model features: {missing_features}")
+    predictions = model.predict(test.frame[feature_columns])
     baseline_metrics, baseline_users = _ranking_metrics(
         test.frame, None, total_queries=test.total_queries
     )
@@ -40,7 +44,7 @@ def evaluate_final_test(config_path: str | Path) -> dict[str, Any]:
         "split": "test",
         "final": True,
         "model_path": output["model_path"],
-        "features": FEATURE_COLUMNS,
+        "features": feature_columns,
         "total_queries": test.total_queries,
         "retrieved_queries": test.retrieved_queries,
         "candidate_recall@200": test.retrieved_queries / test.total_queries,

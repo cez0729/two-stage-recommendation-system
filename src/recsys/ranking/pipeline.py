@@ -24,7 +24,26 @@ from recsys.retrieval.two_tower import TwoTowerModel
 from recsys.utils.io import write_json
 from recsys.utils.seed import seed_everything
 
-FEATURE_COLUMNS = [
+BASE_FEATURE_COLUMNS = [
+    "two_tower_score",
+    "two_tower_rank",
+    "itemcf_score",
+    "itemcf_rank",
+    "popularity_score",
+    "popularity_rank",
+    "source_count",
+    "rrf_score",
+    "best_source_rank",
+    "user_history_length",
+    "user_mean_rating",
+    "user_rating_std",
+    "days_since_last_action",
+    "item_popularity_log",
+    "item_mean_rating",
+    "item_rating_std",
+]
+
+CONTENT_FEATURE_COLUMNS = [
     "two_tower_score",
     "two_tower_rank",
     "content_score",
@@ -44,6 +63,14 @@ FEATURE_COLUMNS = [
     "item_mean_rating",
     "item_rating_std",
 ]
+
+
+def feature_columns_for_config(config: dict[str, Any]) -> list[str]:
+    """Return the ranking schema enabled by a ranker configuration."""
+    content_config = config.get("retrieval", {}).get("content", {})
+    if bool(content_config.get("enabled", False)):
+        return CONTENT_FEATURE_COLUMNS
+    return BASE_FEATURE_COLUMNS
 
 
 @dataclass
@@ -102,6 +129,7 @@ class FeaturePipeline:
 
     def __init__(self, config: dict[str, Any]) -> None:
         self.config = config
+        self.feature_columns = feature_columns_for_config(config)
         self.interactions = pd.read_parquet(config["data"]["interactions_path"])
         self.retrieval_train = self.interactions[
             self.interactions["split"] == "retrieval_train"
@@ -322,7 +350,7 @@ class FeaturePipeline:
                 )
 
         frame = pd.concat(collected, ignore_index=True)
-        if frame[FEATURE_COLUMNS].isna().any().any():
+        if frame[self.feature_columns].isna().any().any():
             raise ValueError(f"{split} feature frame contains missing values")
         return CandidateDataset(
             frame=frame,
@@ -365,6 +393,7 @@ def _ranking_metrics(
 
 def train_ranker(config_path: str | Path) -> dict[str, Any]:
     config = load_yaml(config_path)
+    feature_columns = feature_columns_for_config(config)
     seed = int(config["seed"])
     seed_everything(seed)
     output = config["outputs"]
@@ -415,10 +444,10 @@ def train_ranker(config_path: str | Path) -> dict[str, Any]:
         verbosity=-1,
     )
     ranker.fit(
-        training.frame[FEATURE_COLUMNS],
+        training.frame[feature_columns],
         training.frame["label"],
         group=training.group_sizes,
-        eval_set=[(validation.frame[FEATURE_COLUMNS], validation.frame["label"])],
+        eval_set=[(validation.frame[feature_columns], validation.frame["label"])],
         eval_group=[validation.group_sizes],
         eval_at=[10],
         callbacks=[lgb.early_stopping(int(model_config["early_stopping_rounds"]), verbose=False)],
@@ -426,7 +455,7 @@ def train_ranker(config_path: str | Path) -> dict[str, Any]:
     Path(output["model_path"]).parent.mkdir(parents=True, exist_ok=True)
     ranker.booster_.save_model(output["model_path"])
     validation_predictions = ranker.predict(
-        validation.frame[FEATURE_COLUMNS], num_iteration=ranker.best_iteration_
+        validation.frame[feature_columns], num_iteration=ranker.best_iteration_
     )
     baseline_metrics, baseline_users = _ranking_metrics(
         validation.frame, None, total_queries=validation.total_queries
@@ -444,7 +473,7 @@ def train_ranker(config_path: str | Path) -> dict[str, Any]:
     )
     importance = pd.DataFrame(
         {
-            "feature": FEATURE_COLUMNS,
+            "feature": feature_columns,
             "gain": ranker.booster_.feature_importance(importance_type="gain"),
             "split": ranker.booster_.feature_importance(importance_type="split"),
         }
@@ -457,12 +486,12 @@ def train_ranker(config_path: str | Path) -> dict[str, Any]:
     comparison.to_parquet(output["per_user_path"], index=False)
     reloaded = lgb.Booster(model_file=output["model_path"])
     reload_predictions = reloaded.predict(
-        validation.frame[FEATURE_COLUMNS].iloc[:200], num_iteration=ranker.best_iteration_
+        validation.frame[feature_columns].iloc[:200], num_iteration=ranker.best_iteration_
     )
     payload = {
         "selection_split": "validation",
         "test_evaluated": False,
-        "features": FEATURE_COLUMNS,
+        "features": feature_columns,
         "best_iteration": int(ranker.best_iteration_),
         "datasets": {
             "rank_train": {
@@ -491,7 +520,7 @@ def train_ranker(config_path: str | Path) -> dict[str, Any]:
         "feature_importance_top10": importance.head(10).to_dict("records"),
     }
     write_json(output["metrics_path"], payload)
-    write_json(output["feature_schema_path"], {"features": FEATURE_COLUMNS})
+    write_json(output["feature_schema_path"], {"features": feature_columns})
     return payload
 
 

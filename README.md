@@ -1,118 +1,170 @@
-# 两阶段电商推荐系统
+# Leakage-Aware Two-Stage Recommendation System
 
-[English](README_EN.md) | 中文
+English | [中文](README_ZH.md)
 
-本项目实现了一套两阶段推荐系统，基于 Amazon Reviews 2018 Video Games 数据集完成离线训练与评估。
+[![CI](https://github.com/cez0729/two-stage-recommendation-system/actions/workflows/ci.yml/badge.svg)](https://github.com/cez0729/two-stage-recommendation-system/actions/workflows/ci.yml)
+[Runtime release](https://github.com/cez0729/two-stage-recommendation-system/releases/tag/recsys_phase6_content_v1)
 
-候选召回由 Two-Tower + FAISS、ItemCF、Popularity 和 TF-IDF Content Retrieval 组成，并通过 RRF 融合候选；精排阶段使用 LightGBM LambdaRank。
+An end-to-end recommendation research prototype built on 197,597 temporally
+split Amazon Video Games interactions. It combines collaborative, neural, and
+content retrieval with LambdaRank, then serves the frozen pipeline through a
+versioned FastAPI/Redis/Docker stack.
 
-## 主要结果
+The project focuses on reproducible offline evaluation, leakage-aware feature construction, cold-start retrieval, and consistency between offline ranking and online serving.
 
-| 实验                         |     结果 |
-| -------------------------- | -----: |
-| 四通道 Candidate Recall@200   | 24.20% |
-| 内容消融 matched 三通道 Candidate Recall@200 | 20.65% |
-| 严格冷启动 Content Recall@100   | 14.29% |
-| 严格冷启动 Two-Tower Recall@100 |  0.00% |
+## Highlights
 
-正式实验包含 19,621 位可评估用户、14,391 个商品和 197,597 条时间切分后的交互记录。详细实验、消融和稳健性分析见 `reports/final_research_report_zh.md`。
+| Result | Evidence |
+| --- | ---: |
+| Evaluated users / items | 19,621 / 14,391 |
+| Four-channel test Candidate Recall@200 | 24.20% |
+| Matched three-channel baseline (content ablation) | 20.65% |
+| Strict-cold test Recall@100 | Content 14.29%, Two-Tower 0% |
+| Strict-cold test users | 721 |
+| Content-aware validation NDCG@10| LambdaRank 3.85%, RRF order 3.19% |
+| Offline/serving Top-10 parity | 20/20 users |
+| Automated checks | Unit/API tests, Ruff, and Docker build in CI |
 
+The fixed candidate budget remains 200. The content gain therefore comes from
+better candidate composition rather than retrieving more items. The strict-cold
+comparison is supported by a 95% bootstrap interval and an exact McNemar test.
 
-## 当前目录说明
+## Questions investigated
 
-- `configs/`：保存可读、可修改的运行参数。
-- `src/recsys/`：保存真正可复用的 Python 代码。
-- `tests/`：保存自动检查程序，用小样例证明基础代码行为正确。
-- `data/`：保存原始数据、中间数据和清洗后的数据；实际数据不提交 Git。
-- `artifacts/`：保存 ID 映射、字段定义、FAISS 索引等由程序生成的配套产物。
-- `models/`：保存训练好的双塔和精排模型。
-- `runs/`：保存每次训练的配置、日志、指标和环境信息。
-- `results/`：保存可公开的小型 JSON/CSV 评估结果。
-- `reports/`：保存技术报告和图表。
+- Why did the first Two-Tower model retrieve fewer relevant items than Popularity?
+- Can item metadata recover targets with no retrieval-training interactions?
+- Do retrieval gains hold at the same final candidate budget and under global time cutoffs?
+- Does the deployed ranking path reproduce offline recommendations?
 
-## 安装与检查
+See the [research notes and evidence map](reports/research_notes_en.md) for the
+failed baseline, controlled comparisons, method references, and limitations.
 
-```powershell
+## Architecture
+
+```mermaid
+flowchart LR
+    U[User history] --> TT[Two-Tower + FAISS]
+    U --> CF[ItemCF]
+    U --> POP[Popularity]
+    U --> CT[TF-IDF content]
+    TT --> RRF[RRF fusion and deduplication]
+    CF --> RRF
+    POP --> RRF
+    CT --> RRF
+    RRF --> C[200 candidates]
+    C --> F[Model-declared 16 or 18 features]
+    F --> L[LightGBM LambdaRank]
+    L --> API[FastAPI Top-K API]
+    API --> REDIS[Redis cache]
+    API --> OBS[Prometheus and Grafana]
+    API --> FB[SQLite feedback log]
+```
+
+The Content-aware serving version is `recsys_phase6_content_v1`. The original
+`recsys_baseline_v1` remains an immutable rollback snapshot.
+
+The frozen three-channel baseline uses 16 ranking features; the content-aware
+ranker adds `content_score` and `content_rank` for a total of 18. The 20.65%
+three-channel result is the matched baseline for the content ablation, while
+the frozen baseline V1 test result is reported separately as 21.00%.
+
+## Research Design
+
+- Per-user temporal splits separate retrieval training, rank training,
+  validation, and test interactions.
+- Retrieval metrics use the complete training catalog rather than sampled
+  negatives.
+- TF-IDF vocabulary is fitted only on retrieval-training catalog items, while
+  the searchable matrix includes metadata-visible cold items.
+- A second evaluation uses pre-registered global cutoffs at 2016-01-01 and
+  2017-01-01.
+- A controlled three-seed ablation isolates logQ sampling correction. It
+  improves accuracy consistently but reduces catalog coverage and increases
+  popularity bias; both sides of the trade-off are reported.
+- Offline and serving code paths are checked for exact Top-10 parity.
+
+## Repository Guide
+
+| Path | Purpose |
+| --- | --- |
+| `src/recsys/data` | Downloading, cleaning, metadata audit, temporal splits |
+| `src/recsys/retrieval` | Popularity, ItemCF, Two-Tower, FAISS, TF-IDF content |
+| `src/recsys/ranking` | Candidate fusion, feature generation, LambdaRank |
+| `src/recsys/serving` | API, cache, feedback, metrics, version resolution |
+| `configs` | Reproducible experiment and serving configuration |
+| `tests` | Unit, smoke, API, and leakage checks |
+| `results` | Compact machine-readable research evidence |
+| `reports` | Full Chinese research report and supporting analysis |
+| `monitoring` | Prometheus and Grafana configuration |
+| `deploy` | Ubuntu VM deployment instructions |
+
+## Quick Verification
+
+Python 3.11 or newer is required.
+
+```bash
+python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.2,<3"
 python -m pip install -e ".[dev]"
-python -c "import recsys; print(recsys.__version__)"
 python -m ruff check .
-python -m pytest
+python -m pytest -q
 ```
 
-## 数据流程
+The tests use synthetic fixtures and do not require the Amazon dataset or model
+artifacts.
 
-```powershell
-python -m recsys.data.download --config configs/data.yaml
-python -m recsys.data.clean --config configs/data.yaml
-python -m recsys.data.split --config configs/data.yaml
+## Run the Frozen Demo
+
+Large data and model binaries are deliberately excluded from Git history. A
+runtime bundle can be attached to the GitHub Release for
+`recsys_phase6_content_v1`. Extract that archive into the repository root, then:
+
+```bash
+docker compose -p recsys-content -f docker-compose.content.yml up -d --build
+curl http://127.0.0.1:8001/health
+curl "http://127.0.0.1:8001/recommend/A0266076X6KPZ6CCHGVS?k=10"
+curl "http://127.0.0.1:8001/recommend/unknown-user?k=5"
 ```
 
-程序会生成：
+Expected health version: `recsys_phase6_content_v1`. Unknown users use a
+deterministic popularity fallback. `k` is restricted to 1 through 50.
 
-- `artifacts/raw_manifest.json`：原始文件来源、字段、大小和哈希。
-- `artifacts/data_manifest.json`：每一步过滤后的规模和处理后文件哈希。
-- `artifacts/split_stats.json`：四个时间切分的行数和防泄露检查结果。
-- `data/processed/interactions.parquet`：带有 `split` 标签的最终交互表。
-- `data/processed/items.parquet`、`users.parquet`：商品表和用户统计表。
+Build the release bundle from a fully trained local workspace with:
 
-## 运行召回基线
-
-```powershell
-python -m recsys.retrieval.popularity --config configs/popularity.yaml
-python -m recsys.retrieval.itemcf --config configs/itemcf.yaml
-python -m recsys.evaluation.compare_baselines --results-dir results/video_games_2018/baselines
+```bash
+python scripts/package_github_release.py
 ```
 
-正式实验解释见 `reports/video_games_baseline_evaluation.md`，机器可读结果见
-`results/video_games_2018/baselines/retrieval_comparison.csv`。早期小数据结果见
-`reports/baseline_evaluation.md`。
+## Data
 
-## 双塔实验
+The formal experiment uses the public UCSD McAuley Lab Amazon Reviews 2018
+Video Games 5-core dataset:
 
-```powershell
-python -m recsys.retrieval.train --config configs/two_tower_v3_logq.yaml
-python -m recsys.retrieval.train --config configs/two_tower_v3_final.yaml
-```
+- [Interactions](https://mcauleylab.ucsd.edu/public_datasets/data/amazon_v2/categoryFilesSmall/Video_Games_5.json.gz)
+- [Product metadata](https://mcauleylab.ucsd.edu/public_datasets/data/amazon_v2/metaFiles2/meta_Video_Games.json.gz)
 
-第一条命令只使用验证集选择模型；第二条命令加载冻结 checkpoint 并执行一次最终测试。调参过程不会反复读取测试集。
+Ratings of at least 3 are treated as positive implicit-feedback proxies. They
+are not impressions, clicks, or purchases.
 
-## FAISS 与精排
+## Engineering Validation
 
-```powershell
-python -m recsys.retrieval.faiss_index --config configs/faiss.yaml
-python -m recsys.ranking.pipeline --config configs/ranker.yaml
-python -m recsys.ranking.evaluate --config configs/ranker.yaml
-```
+- `recsys_phase6_content_v1` contains checksumed Two-Tower, FAISS, TF-IDF, and
+  LambdaRank artifacts.
+- The Content-aware Docker stack was validated on an AWS Ubuntu host at port 8001
+  while the baseline remained healthy at port 8000.
+- Known-user, unknown-user fallback, invalid-parameter, metrics, Redis, and
+  health paths were exercised successfully.
+- A local one-process load test saturated around 11-15 QPS; P95 latency rose to
+  8.30 seconds at concurrency 50. This is reported as a limitation, not an SLA.
 
-FAISS 命令会验证真实用户 Top-100 与 NumPy 精确点积一致。精排训练只使用 `rank_train`，验证集用于早停；最终评估命令只加载冻结模型并读取测试集。冻结的三通道 baseline 使用 16 个排序特征；content-aware ranker 新增 `content_score` 和 `content_rank`，共 18 个特征。
+## Limitations
 
-主要机器可读结果：
+- Public review data has no exposure logs, online CTR/CVR, purchases, or A/B
+  tests, so no commercial lift is claimed.
+- Static metadata availability time cannot be independently reconstructed.
+- The content channel is interpretable TF-IDF plus score-level RRF, not a jointly
+  trained hybrid item tower.
+- SQLite and anonymous Grafana access are appropriate for a demo, not a
+  multi-tenant production platform.
 
-- `results/video_games_2018/two_tower_v3_final_metrics.json`
-- `results/video_games_2018/faiss_benchmark.json`
-- `results/video_games_2018/ranking_validation_metrics.json`
-- `results/video_games_2018/final_test_metrics.json`
-
-## 内容召回与稳健性实验
-
-```powershell
-python scripts/freeze_content_baseline.py
-python scripts/audit_content_metadata.py
-python scripts/run_content_retrieval.py
-python scripts/run_global_cutoff_experiment.py
-python scripts/run_logq_ablation.py
-python scripts/load_test_api.py
-```
-
-内容召回实验保持每位用户 200 个候选不变。内容通道只使用 `title`、规范化 `brand` 和细粒度类目路径，TF-IDF 词表只在召回训练期可见商品上拟合；`price`、`avg_rating`、`rating_number` 仍因不可用而排除。当前“混合”是可解释的分数级 RRF 融合，不是训练过的 Hybrid Item Tower。
-
-关键结果：
-
-- 元数据审计结论为 GO：商品标题/品牌/细类目覆盖率分别为 99.90%/98.99%/99.05%。
-- 在统一的内容消融协议下，四通道 Candidate Recall@200 为 24.20%，matched 三通道基线为 20.65%。
-- 严格冷启动测试用户中，内容 Recall@100 为 14.29%，Two-Tower 为 0%。
-- 2017 全局 cutoff 的最终留出集上，内容召回相对协同候选的改进方向仍成立。
-- 三随机种子中 logQ 的 Recall@100 均高于 raw，但 Coverage@10 明显下降且热门偏置上升；报告将其作为精度与多样性的权衡，而不是单向胜利。
-- 单 Uvicorn 进程吞吐在约 11–15 QPS 饱和；并发 50 时 P95 约 8.30 秒，因此早期顺序请求的 37.24 QPS 不再作为容量结论。
-
-机器可读证据位于 `results/video_games_2018/phase6/`，Baseline V1 哈希清单位于 `artifacts/video_games_2018/phase6/baseline_v1_manifest.json`。
+See [the full Chinese research report](reports/final_research_report_zh.md) and
+[the serving guide](README_SERVING.md) for implementation and evaluation detail.

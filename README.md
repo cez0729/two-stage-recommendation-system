@@ -155,6 +155,9 @@ are not impressions, clicks, or purchases.
   health paths were exercised successfully.
 - A local one-process load test saturated around 11-15 QPS; P95 latency rose to
   8.30 seconds at concurrency 50. This is reported as a limitation, not an SLA.
+- A candidate-budget sweep measured sequential mean latency of 22.30/22.56/22.91/25.14 ms
+  at budgets 50/100/200/400. At the current catalog size, the 200-candidate budget is a
+  reasonable accuracy/latency operating point; the sweep is host-specific, not a capacity claim.
 
 ## Limitations
 

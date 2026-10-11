@@ -31,6 +31,7 @@ they do not represent exposure, purchase, or click events.
 | Does the conclusion depend on per-user time splits? | A separate global-cutoff experiment checks content and collaborative baselines. | Refit eligible methods before the cutoff; do not reuse a neural checkpoint trained on later interactions. See [global temporal results](../results/video_games_2018/phase6/global_temporal_experiment.json). |
 | Are retrieval and serving implementations consistent? | FAISS Top-100 matches NumPy for 100 users; saved offline and serving Top-10 match for 20 fixed users per version. | Use exact IndexFlatIP at this catalog size and retain parity checks. See [FAISS benchmark](../results/video_games_2018/faiss_benchmark.json) and [parity script](../scripts/check_serving_parity.py). |
 | Does fast sequential serving imply high capacity? | One local process saturates around 11–15 QPS; concurrency 50 raises P95 to 8.30 seconds. | Report the CPU feature-construction bottleneck. See [load-test evidence](../results/video_games_2018/phase6/load_test.json). |
+| How does the final candidate budget affect cost? | Sequential mean latency was 22.30/22.56/22.91/25.14 ms at budgets 50/100/200/400. | Keep 200 as the current accuracy/latency operating point and retain the sweep as host-specific evidence. See [budget sweep](../results/video_games_2018/phase6/candidate_budget_benchmark.json). |
 
 ## Comparisons that must stay separate
 

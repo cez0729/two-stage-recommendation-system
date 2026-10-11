@@ -91,6 +91,9 @@ Serving reads `artifacts/versions/current.json` when present; without it, `confi
   37.24 requests/s. This is a sequential microbenchmark, not capacity.
 - Direct 20-user pipeline profile (100 requests): P95 31.69 ms; feature construction is
   the largest stage at 57.64% of mean latency, while FAISS search is 2.63%.
+- A sequential candidate-budget sweep measured mean latency of 22.30/22.56/22.91/25.14 ms
+  for final pools of 50/100/200/400. This supports retaining 200 as the current operating
+  point; it is a local comparison, not a production capacity estimate.
 - Closed-loop concurrency test on one local Uvicorn process and no Redis: about 11–15 QPS
   across concurrency 1–50; P95 grows from 76.58 ms at concurrency 1 to 8,303.33 ms at
   concurrency 50, with zero request errors. The service is functionally stable but

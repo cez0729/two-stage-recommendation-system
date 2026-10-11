@@ -28,6 +28,12 @@ The frozen ranker baseline requests Two-Tower 100, ItemCF 100, and Popularity
 20, then fuses and backfills to 200 candidates. The content-aware ranker adds
 100 content candidates but keeps the final pool at 200.
 
+The serving complexity sweep in `scripts/benchmark_candidate_budget.py` measures
+final pools of 50, 100, 200, and 400 without retraining. It reports sequential
+latency and Python allocations; native Torch/FAISS memory is outside the
+`tracemalloc` measurement. The current result is saved at
+`results/video_games_2018/phase6/candidate_budget_benchmark.json`.
+
 The separate retrieval ablation uses `retrieval_k=200` for channel generation
 and `report_k=100` for reported Top-100 retrieval metrics. Its matched
 three-channel Candidate Recall@200 is 20.65%; the four-channel result is

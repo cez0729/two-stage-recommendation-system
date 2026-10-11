@@ -1,0 +1,44 @@
+{
+  "config": "configs/serving_content.yaml",
+  "known_users": 8,
+  "repeats_per_budget": 2,
+  "warmup_per_budget": 2,
+  "budgets": [
+    {
+      "candidate_budget": 50,
+      "measured_requests": 16,
+      "mean_ms": 22.301518751191907,
+      "p50_ms": 22.522800019942224,
+      "p95_ms": 25.372475036419928,
+      "peak_python_allocated_mib": 3.657827377319336
+    },
+    {
+      "candidate_budget": 100,
+      "measured_requests": 16,
+      "mean_ms": 22.558887489140034,
+      "p50_ms": 22.404399933293462,
+      "p95_ms": 25.126574968453497,
+      "peak_python_allocated_mib": 3.657825469970703
+    },
+    {
+      "candidate_budget": 200,
+      "measured_requests": 16,
+      "mean_ms": 22.910118743311614,
+      "p50_ms": 22.71429996471852,
+      "p95_ms": 25.15449991915375,
+      "peak_python_allocated_mib": 3.6577653884887695
+    },
+    {
+      "candidate_budget": 400,
+      "measured_requests": 16,
+      "mean_ms": 25.144862505840138,
+      "p50_ms": 23.55385001283139,
+      "p95_ms": 32.44132502004504,
+      "peak_python_allocated_mib": 3.657838821411133
+    }
+  ],
+  "interpretation": {
+    "memory_scope": "tracemalloc Python allocations only; native Torch/FAISS allocations are not included",
+    "latency_scope": "single-process sequential serving on the current host"
+  }
+}

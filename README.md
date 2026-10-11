@@ -171,3 +171,5 @@ are not impressions, clicks, or purchases.
 
 See [the full Chinese research report](reports/final_research_report_zh.md) and
 [the serving guide](README_SERVING.md) for implementation and evaluation detail.
+For a candid comparison with stronger research and industry recommender
+projects, see the [reviewer audit](reports/reviewer_audit_en.md).

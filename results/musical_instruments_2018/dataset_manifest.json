@@ -1,0 +1,210 @@
+{
+  "cleaned": {
+    "category": "Musical_Instruments",
+    "created_at_utc": "2026-10-12T12:00:31.239041+08:00",
+    "dataset": "amazon_reviews_2018_5core",
+    "filters": {
+      "deduplicate_user_item": true,
+      "max_interactions": 1500000,
+      "min_item_interactions": 5,
+      "min_rating": 3,
+      "min_user_interactions": 5
+    },
+    "items": 8627,
+    "k_core_iterations": [
+      {
+        "items": 8944,
+        "iteration": 1,
+        "rows": 182374,
+        "users": 22712
+      },
+      {
+        "items": 8695,
+        "iteration": 2,
+        "rows": 177070,
+        "users": 21601
+      },
+      {
+        "items": 8647,
+        "iteration": 3,
+        "rows": 176176,
+        "users": 21425
+      },
+      {
+        "items": 8633,
+        "iteration": 4,
+        "rows": 175932,
+        "users": 21378
+      },
+      {
+        "items": 8629,
+        "iteration": 5,
+        "rows": 175872,
+        "users": 21367
+      },
+      {
+        "items": 8627,
+        "iteration": 6,
+        "rows": 175852,
+        "users": 21364
+      },
+      {
+        "items": 8627,
+        "iteration": 7,
+        "rows": 175848,
+        "users": 21363
+      },
+      {
+        "items": 8627,
+        "iteration": 8,
+        "rows": 175848,
+        "users": 21363
+      }
+    ],
+    "metadata_match": {
+      "matched_items": 8621,
+      "missing_titles": 6
+    },
+    "outputs": {
+      "interactions": {
+        "bytes": 1793543,
+        "path": "data/processed/musical_instruments_2018/interactions_clean.parquet",
+        "sha256": "45a74c18f1bbb234930a0944a7764c196562c9970d0737479e5ee4abb32447ee"
+      },
+      "item_mapping": {
+        "bytes": 133560,
+        "path": "artifacts/musical_instruments_2018/mappings/item_mapping.parquet",
+        "sha256": "177be5808e534e8f2b56ecb2dbbebc01e057eccdc9c74711cc1c43b360139c34"
+      },
+      "items": {
+        "bytes": 500528,
+        "path": "data/processed/musical_instruments_2018/items.parquet",
+        "sha256": "3d92bda6c0451ea28c524bd1f2e3aa03cbd06cc29e907e6019339254dd91ba2d"
+      },
+      "user_mapping": {
+        "bytes": 459014,
+        "path": "artifacts/musical_instruments_2018/mappings/user_mapping.parquet",
+        "sha256": "fc80385215b86c7aba6c93bf74791f490c0389425c61c33add94e200895fdac8"
+      },
+      "users": {
+        "bytes": 578882,
+        "path": "data/processed/musical_instruments_2018/users.parquet",
+        "sha256": "65818dde811a185c5b641dad4a8aaf81b9855b64e02e6e56abdb51d5d45dfd0e"
+      }
+    },
+    "rating_mean": 4.682885,
+    "stages": {
+      "after_exact_deduplication": 220893,
+      "after_interaction_cap": 175848,
+      "after_k_core": 175848,
+      "after_rating_filter": 205221,
+      "after_required_null_filter": 231392,
+      "after_user_item_deduplication": 219156,
+      "raw_rows": 231392
+    },
+    "timestamp_max": "2018-09-27T08:00:00+08:00",
+    "timestamp_min": "2003-10-28T08:00:00+08:00",
+    "users": 21363
+  },
+  "split": {
+    "created_at_utc": "2026-10-12T12:00:32.871352+08:00",
+    "input_interactions": 175848,
+    "interactions": 85389,
+    "items": 8575,
+    "output": {
+      "bytes": 897630,
+      "path": "data/processed/musical_instruments_2018/interactions.parquet",
+      "sha256": "84a0e1466d563777a1a342f5f1eee763d2efcf8f2ee33b1c7a4dd2d8f373cc9a"
+    },
+    "split_diagnostics": {
+      "ambiguous_target_rows_dropped": 12810,
+      "eligible_users": 9249,
+      "excluded_users_insufficient_distinct_timestamps": 12114,
+      "input_users": 21363,
+      "same_timestamp_policy": "select_one_per_target_timestamp"
+    },
+    "split_interactions": {
+      "rank_train": 9249,
+      "retrieval_train": 57642,
+      "test": 9249,
+      "validation": 9249
+    },
+    "split_users": {
+      "rank_train": 9249,
+      "retrieval_train": 9249,
+      "test": 9249,
+      "validation": 9249
+    },
+    "strict_time_order": true,
+    "target_items_absent_from_history": true,
+    "users": 9249
+  },
+  "raw": {
+    "category": "Musical_Instruments",
+    "created_at_utc": "2026-10-12T11:58:33.042921+08:00",
+    "dataset": "amazon_reviews_2018_5core",
+    "files": {
+      "metadata": {
+        "audit": {
+          "fields": [
+            "also_buy",
+            "also_view",
+            "asin",
+            "brand",
+            "category",
+            "date",
+            "description",
+            "details",
+            "feature",
+            "fit",
+            "imageURL",
+            "imageURLHighRes",
+            "main_cat",
+            "price",
+            "rank",
+            "similar_item",
+            "tech1",
+            "tech2",
+            "title"
+          ],
+          "invalid_json_rows": 0,
+          "missing_examples": [],
+          "missing_required_rows": 0,
+          "rows_scanned": 120310,
+          "scan_limit": null
+        },
+        "bytes": 173201671,
+        "path": "data/raw/musical_instruments_2018/meta_Musical_Instruments.json.gz",
+        "sha256": "8e3f0dbe4c6c1aa5b32d350aa26072232beb6160ff3c5dadb44bca2c473a8b41",
+        "url": "https://mcauleylab.ucsd.edu/public_datasets/data/amazon_v2/metaFiles2/meta_Musical_Instruments.json.gz"
+      },
+      "reviews": {
+        "audit": {
+          "fields": [
+            "asin",
+            "image",
+            "overall",
+            "reviewText",
+            "reviewTime",
+            "reviewerID",
+            "reviewerName",
+            "style",
+            "summary",
+            "unixReviewTime",
+            "verified",
+            "vote"
+          ],
+          "invalid_json_rows": 0,
+          "missing_examples": [],
+          "missing_required_rows": 0,
+          "rows_scanned": 231392,
+          "scan_limit": null
+        },
+        "bytes": 39353085,
+        "path": "data/raw/musical_instruments_2018/Musical_Instruments_5.json.gz",
+        "sha256": "e3ae8a3f0d70bf63242a49539a8847d30216a3aa2938c049c7f43d0473fef1bc",
+        "url": "https://mcauleylab.ucsd.edu/public_datasets/data/amazon_v2/categoryFilesSmall/Musical_Instruments_5.json.gz"
+      }
+    }
+  }
+}

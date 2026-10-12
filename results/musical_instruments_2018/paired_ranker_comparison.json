@@ -1,0 +1,35 @@
+{
+  "acceptance": {
+    "primary_ci_strictly_positive": false
+  },
+  "bootstrap_samples": 2000,
+  "comparisons": {
+    "ndcg@10": {
+      "four_channel_ranker": 0.016666611455973025,
+      "four_minus_three": 0.0015471436779801722,
+      "paired_ci95": {
+        "high": 0.003486165777167305,
+        "low": -0.0003531303930711074
+      },
+      "three_channel_ranker": 0.015119467777992855
+    },
+    "recall@10": {
+      "four_channel_ranker": 0.03178722024002595,
+      "four_minus_three": 0.002486755324899989,
+      "paired_ci95": {
+        "high": 0.0060547086171478,
+        "low": -0.0008649583738782571
+      },
+      "three_channel_ranker": 0.02930046491512596
+    }
+  },
+  "limitations": [
+    "One training seed",
+    "No online business outcome evidence"
+  ],
+  "missing_candidate_handling": "All retrieval misses contribute zero; same test users",
+  "primary_endpoint": "ndcg@10",
+  "scope": "End-to-end comparison changes candidate composition and ranker features",
+  "seed": 42,
+  "users": 9249
+}

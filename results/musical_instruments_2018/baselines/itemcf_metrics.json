@@ -1,0 +1,137 @@
+{
+  "config_sha256": "1247332b2f71a5c121c91f198b02580599ac83f3ef8fe31eab311cef25ac5bbc",
+  "created_at_utc": "2026-10-12T04:05:36.445990+00:00",
+  "data_manifest_sha256": "ce1248a60d8c3a6e9b8d2e7df3dbf235bc440340d12af3c2926eb03e657356cf",
+  "git_commit": "unavailable_not_a_git_repository",
+  "run_id": "itemcf_baseline",
+  "splits": {
+    "test": {
+      "catalog_size": 8169,
+      "cold_target_rate": 0.0514650232457563,
+      "confidence_intervals_95": {
+        "mrr@10": {
+          "high": 0.004565214686444008,
+          "low": 0.0027055080600734186
+        },
+        "ndcg@10": {
+          "high": 0.0064380986486649045,
+          "low": 0.0041991637109245515
+        },
+        "recall@10": {
+          "high": 0.013085198399826994,
+          "low": 0.008865823332252136
+        },
+        "recall@100": {
+          "high": 0.0731971023894475,
+          "low": 0.06324737809492918
+        },
+        "recall@20": {
+          "high": 0.0242188344685912,
+          "low": 0.01827224564817818
+        },
+        "recall@50": {
+          "high": 0.04616985620067033,
+          "low": 0.03805816845064331
+        }
+      },
+      "evaluation_mode": "full_catalog",
+      "metrics": {
+        "coverage@10": 0.9751499571550986,
+        "mrr@10": 0.0036081549785734026,
+        "mrr@100": 0.005323573646316177,
+        "mrr@20": 0.0043081380633185245,
+        "mrr@50": 0.004954954564963049,
+        "ndcg@10": 0.005277454086644825,
+        "ndcg@100": 0.016210757680373337,
+        "ndcg@20": 0.007857753516725506,
+        "ndcg@50": 0.011966108994529073,
+        "p50_latency_ms": 2.259800210595131,
+        "p95_latency_ms": 8.539819950237879,
+        "popularity_bias_ratio": 0.37413167668439584,
+        "recall@10": 0.010920099470212996,
+        "recall@100": 0.06833171153638232,
+        "recall@100_given_available": 0.07203921121623162,
+        "recall@10_given_available": 0.01151259546335347,
+        "recall@20": 0.0211914801600173,
+        "recall@20_given_available": 0.022341274364527527,
+        "recall@50": 0.04205860092983025,
+        "recall@50_given_available": 0.04434059044796535,
+        "recommended_mean_popularity": 8.419115580062709,
+        "target_mean_popularity": 22.503081414206942
+      },
+      "model": "itemcf",
+      "num_users": 9249,
+      "source_item_counts": {
+        "itemcf": 923142,
+        "popularity": 1758
+      },
+      "split": "test",
+      "target_catalog_availability": 0.9485349767542437,
+      "users_with_fewer_than_max_k": 0
+    },
+    "validation": {
+      "catalog_size": 8169,
+      "cold_target_rate": 0.03805816845064336,
+      "confidence_intervals_95": {
+        "mrr@10": {
+          "high": 0.004988867307834221,
+          "low": 0.003197742741815074
+        },
+        "ndcg@10": {
+          "high": 0.007424345759177464,
+          "low": 0.005062270690294094
+        },
+        "recall@10": {
+          "high": 0.01567737052654341,
+          "low": 0.010920099470212996
+        },
+        "recall@100": {
+          "high": 0.08379284246945616,
+          "low": 0.07265650340577359
+        },
+        "recall@20": {
+          "high": 0.025948751216347713,
+          "low": 0.020002162395934695
+        },
+        "recall@50": {
+          "high": 0.05114066385555195,
+          "low": 0.042488377121851016
+        }
+      },
+      "evaluation_mode": "full_catalog",
+      "metrics": {
+        "coverage@10": 0.9793120332966091,
+        "mrr@10": 0.004035442699082011,
+        "mrr@100": 0.005878142767403963,
+        "mrr@20": 0.0047051159812743605,
+        "mrr@50": 0.005442031667196975,
+        "ndcg@10": 0.006156845479525132,
+        "ndcg@100": 0.01834656345512137,
+        "ndcg@20": 0.008609656896766082,
+        "ndcg@50": 0.013292397439373969,
+        "p50_latency_ms": 1.8794001080095768,
+        "p95_latency_ms": 8.106279978528622,
+        "popularity_bias_ratio": 0.3528537968171968,
+        "recall@10": 0.013190615201643422,
+        "recall@100": 0.0780624932425127,
+        "recall@100_given_available": 0.08115094975834551,
+        "recall@10_given_available": 0.0137124873552883,
+        "recall@20": 0.022921396907773815,
+        "recall@20_given_available": 0.02382825671574688,
+        "recall@50": 0.04670775218942588,
+        "recall@50_given_available": 0.04855569293020119,
+        "recommended_mean_popularity": 8.71414206941291,
+        "target_mean_popularity": 24.696183371175263
+      },
+      "model": "itemcf",
+      "num_users": 9249,
+      "source_item_counts": {
+        "itemcf": 918914,
+        "popularity": 5986
+      },
+      "split": "validation",
+      "target_catalog_availability": 0.9619418315493566,
+      "users_with_fewer_than_max_k": 0
+    }
+  }
+}

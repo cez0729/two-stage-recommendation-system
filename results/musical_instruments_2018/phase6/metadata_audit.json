@@ -1,0 +1,226 @@
+{
+  "catalog_items": 8627,
+  "decision": "GO",
+  "decision_rule": {
+    "fine_category_catalog_coverage_min": 0.9,
+    "strict_cold_title_coverage_min": 0.95,
+    "title_catalog_coverage_min": 0.95
+  },
+  "excluded_fields": {
+    "avg_rating": "absent from the formal source and temporally cumulative",
+    "price": "unreliable parsing and possible temporal variation",
+    "rating_number": "absent from the formal source and temporally cumulative"
+  },
+  "fields": {
+    "brand": {
+      "coverage": 0.9916541091920714,
+      "median_characters": 8.0,
+      "top_values": [
+        {
+          "count": 378,
+          "value": "Fender"
+        },
+        {
+          "count": 222,
+          "value": "JIM DUNLOP"
+        },
+        {
+          "count": 193,
+          "value": "Behringer"
+        },
+        {
+          "count": 142,
+          "value": "Yamaha"
+        },
+        {
+          "count": 126,
+          "value": "OnStage"
+        },
+        {
+          "count": 113,
+          "value": "D'Addario Accessories"
+        },
+        {
+          "count": 103,
+          "value": "Kmise"
+        },
+        {
+          "count": 102,
+          "value": "D'Addario"
+        },
+        {
+          "count": 91,
+          "value": "Shure"
+        },
+        {
+          "count": 76,
+          "value": "Ernie Ball"
+        }
+      ],
+      "unique_ratio_among_usable": 0.17159555815312683,
+      "unique_values": 1468,
+      "usable_count": 8555
+    },
+    "fine_category": {
+      "coverage": 0.973803176075113,
+      "median_characters": 95.0,
+      "top_values": [
+        {
+          "count": 309,
+          "value": "Musical Instruments > Instrument Accessories > Guitar & Bass Accessories > Picks & Pick Holders > Picks"
+        },
+        {
+          "count": 262,
+          "value": "Musical Instruments > Instrument Accessories > Guitar & Bass Accessories > Straps & Strap Locks > Straps"
+        },
+        {
+          "count": 189,
+          "value": "Musical Instruments > Live Sound & Stage > Stage & Studio Cables > Microphone Cables"
+        },
+        {
+          "count": 173,
+          "value": "Musical Instruments > Instrument Accessories > Guitar & Bass Accessories"
+        },
+        {
+          "count": 168,
+          "value": "Musical Instruments > Live Sound & Stage > Stage & Studio Cables > Instrument Cables"
+        },
+        {
+          "count": 159,
+          "value": "Musical Instruments > Amplifiers & Effects > Guitar Effects > Electric Guitar Effects > Single Effects > Distortion & Overdrive"
+        },
+        {
+          "count": 144,
+          "value": "Musical Instruments > Guitars > Electric Guitars > Solid Body"
+        },
+        {
+          "count": 125,
+          "value": "Musical Instruments > Instrument Accessories > Guitar & Bass Accessories > Strings > Acoustic Guitar Strings"
+        },
+        {
+          "count": 118,
+          "value": "Musical Instruments > Instrument Accessories > Guitar & Bass Accessories > Strings > Electric Guitar Strings"
+        },
+        {
+          "count": 116,
+          "value": "Musical Instruments > Microphones & Accessories > Accessories > Stands"
+        }
+      ],
+      "unique_ratio_among_usable": 0.058683490060707055,
+      "unique_values": 493,
+      "usable_count": 8401
+    },
+    "main_category": {
+      "coverage": 0.9976816969977976,
+      "median_characters": 19.0,
+      "top_values": [
+        {
+          "count": 8398,
+          "value": "Musical Instruments"
+        },
+        {
+          "count": 67,
+          "value": "Home Audio & Theater"
+        },
+        {
+          "count": 38,
+          "value": "All Electronics"
+        },
+        {
+          "count": 33,
+          "value": "Amazon Home"
+        },
+        {
+          "count": 13,
+          "value": "Computers"
+        },
+        {
+          "count": 12,
+          "value": "Camera & Photo"
+        },
+        {
+          "count": 10,
+          "value": "Software"
+        },
+        {
+          "count": 9,
+          "value": "Cell Phones & Accessories"
+        },
+        {
+          "count": 8,
+          "value": "Tools & Home Improvement"
+        },
+        {
+          "count": 6,
+          "value": "Toys & Games"
+        }
+      ],
+      "unique_ratio_among_usable": 0.0020913210177762286,
+      "unique_values": 18,
+      "usable_count": 8607
+    },
+    "title": {
+      "coverage": 0.9993045090993393,
+      "median_characters": 59.0,
+      "top_values": [
+        {
+          "count": 3,
+          "value": "Clayton Black Raven Guitar Picks (Select from gauges .38mm - 1.26mm)"
+        },
+        {
+          "count": 3,
+          "value": "Star Line Baton Co. Starlet II Twirling Baton"
+        },
+        {
+          "count": 2,
+          "value": "Hosa Technology GXR134 Signal Converter"
+        },
+        {
+          "count": 2,
+          "value": "Epiphone Les Paul-100 Electric Guitar, Ebony"
+        },
+        {
+          "count": 2,
+          "value": "Martin Acoustic Guitar Body (M1700)"
+        },
+        {
+          "count": 2,
+          "value": "Chauvet Lighting Chauvet DJ 700 Hurricane Fog Machine, Black (H700)"
+        },
+        {
+          "count": 2,
+          "value": "Clayton Ultem Guitar Picks (Select from gauges .38mm - 1.20mm)"
+        },
+        {
+          "count": 2,
+          "value": "Lee Oskar Harmonicas Harmonica (1910RP)"
+        },
+        {
+          "count": 2,
+          "value": "Fender Electric Guitar Strap"
+        },
+        {
+          "count": 2,
+          "value": "Fender Treated Polish Cloth"
+        }
+      ],
+      "unique_ratio_among_usable": 0.9966361210996404,
+      "unique_values": 8592,
+      "usable_count": 8621
+    }
+  },
+  "ignored_duplicate_raw_records": 1443,
+  "matched_raw_records": 8621,
+  "raw_match_rate": 0.9993045090993393,
+  "snapshot_limit": "Metadata is a static public snapshot. Content fields do not use outcomes, but their historical availability time is not independently verified.",
+  "strict_cold": {
+    "coverage": {
+      "brand": 1.0,
+      "fine_category": 0.9726890756302521,
+      "main_category": 0.9978991596638656,
+      "title": 1.0
+    },
+    "test_targets": 476,
+    "unique_items": 276
+  }
+}

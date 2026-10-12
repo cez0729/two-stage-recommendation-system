@@ -1,0 +1,29 @@
+{
+  "artifacts": {
+    "checkpoint_sha256": "8862a5de330820c0173118b98356b00c930b0e34ef0c1ad115a728e235848b76",
+    "index_path": "artifacts/musical_instruments_2018/faiss/item_flat.index",
+    "item_ids_path": "artifacts/musical_instruments_2018/faiss/faiss_item_ids.npy",
+    "vectors_sha256": "5087af965214cd699eb4da045e8bed16235a5b2d675e021863488dfb48806ac2"
+  },
+  "build_seconds": 0.008117299992591143,
+  "correctness": {
+    "exact_row_match_rate": 0.98,
+    "k": 100,
+    "mean_topk_overlap": 1.0,
+    "reload_identical": true,
+    "users": 100
+  },
+  "embedding_dim": 64,
+  "index_size_bytes": 2091309,
+  "index_type": "IndexFlatIP",
+  "latency_ms": {
+    "batch_p50": 37.96374995727092,
+    "batch_p95": 46.109200001228594,
+    "batch_per_user_p95": 0.3602281250095984,
+    "batch_size": 128,
+    "single_p50": 0.6350999465212226,
+    "single_p95": 0.9468300966545934
+  },
+  "metric": "inner_product",
+  "num_items": 8169
+}

@@ -1,0 +1,56 @@
+{
+  "acceptance": {
+    "ndcg@10_delta": 0.0075253877817429305,
+    "ndcg@10_not_worse": true
+  },
+  "candidate_recall@200": 0.18412801383933397,
+  "features": [
+    "two_tower_score",
+    "two_tower_rank",
+    "content_score",
+    "content_rank",
+    "itemcf_score",
+    "itemcf_rank",
+    "popularity_score",
+    "popularity_rank",
+    "source_count",
+    "rrf_score",
+    "best_source_rank",
+    "user_history_length",
+    "user_mean_rating",
+    "user_rating_std",
+    "days_since_last_action",
+    "item_popularity_log",
+    "item_mean_rating",
+    "item_rating_std"
+  ],
+  "final": true,
+  "lambdarank_metrics": {
+    "candidate_recall@200": 0.18412801383933397,
+    "mrr@10": 0.012075865773562821,
+    "mrr@20": 0.01346747628076427,
+    "mrr@5": 0.010689443903845458,
+    "ndcg@10": 0.016666611455973025,
+    "ndcg@20": 0.02189030731988528,
+    "ndcg@5": 0.013247624490159125,
+    "recall@10": 0.03178722024002595,
+    "recall@20": 0.05276246080657369,
+    "recall@5": 0.021083360363282518
+  },
+  "model_path": "models/musical_instruments_2018/ranker_phase6_content.txt",
+  "retrieval_order_metrics": {
+    "candidate_recall@200": 0.18412801383933397,
+    "mrr@10": 0.006114903884933077,
+    "mrr@20": 0.0075983783632162984,
+    "mrr@5": 0.004905034778534615,
+    "ndcg@10": 0.009141223674230094,
+    "ndcg@20": 0.014712022187723954,
+    "ndcg@5": 0.006064115117470088,
+    "recall@10": 0.019461563412260786,
+    "recall@20": 0.04184236133636069,
+    "recall@5": 0.00962266190939561
+  },
+  "retrieved_queries": 1703,
+  "split": "test",
+  "total_queries": 9249
+}

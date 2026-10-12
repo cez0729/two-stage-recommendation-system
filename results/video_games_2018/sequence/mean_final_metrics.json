@@ -1,0 +1,128 @@
+{
+  "acceptance": {
+    "comparison_split": "test",
+    "gap_to_itemcf": -0.06304469700830742,
+    "itemcf_recall@100": 0.1569746699964324,
+    "meets_popularity_floor": true,
+    "popularity_recall@100": 0.06411497884919219,
+    "two_tower_recall@100": 0.09392997298812497
+  },
+  "artifacts": {
+    "checkpoint": "models/video_games_2018/two_tower_mean_comparison.pt",
+    "item_ids": "artifacts/video_games_2018/retrieval/tuning/two_tower_mean_comparison_item_ids.npy",
+    "item_vectors": "artifacts/video_games_2018/retrieval/tuning/two_tower_mean_comparison_item_vectors.npy"
+  },
+  "best_epoch": 29,
+  "config_sha256": "fb242461e2fdbb5d0e6cc43c6fda1159a2bb25748d2b6eb953127f3fa34c8c4b",
+  "created_at_utc": "2026-10-12T04:41:52.183788+00:00",
+  "data_manifest_sha256": "ec4a50519f37c0be8cc7f4f9a9089eb7de856eb1e78885aca2cf35ab398fc938",
+  "device": "cpu",
+  "evaluation_only": true,
+  "run_id": "20261012T044127Z_two_tower",
+  "selected_validation_recall@100": 0.11508078079608583,
+  "splits": {
+    "test": {
+      "catalog_size": 13923,
+      "cold_target_rate": 0.036746343203710286,
+      "confidence_intervals_95": {
+        "recall@10": {
+          "high": 0.019877936904337184,
+          "low": 0.016205850874063506
+        },
+        "recall@100": {
+          "high": 0.09785561388308445,
+          "low": 0.0898004688853779
+        },
+        "recall@20": {
+          "high": 0.033995464043626716,
+          "low": 0.02915243871362316
+        },
+        "recall@50": {
+          "high": 0.06391111564140461,
+          "low": 0.05733652719025534
+        }
+      },
+      "evaluation_mode": "full_catalog_exact_dot_product",
+      "metrics": {
+        "coverage@10": 0.7340372046254399,
+        "mrr@10": 0.005713407969918851,
+        "mrr@100": 0.007997023958692876,
+        "mrr@20": 0.006630464774145101,
+        "mrr@50": 0.007535567774669063,
+        "ndcg@10": 0.008542902763563247,
+        "ndcg@100": 0.023027039393323782,
+        "ndcg@20": 0.011924168019211078,
+        "ndcg@50": 0.01765255742538797,
+        "p50_latency_ms_batch_amortized": 0.3067347652176977,
+        "p95_latency_ms_batch_amortized": 0.42749375006678747,
+        "p95_latency_ms_single_query": 20.28977987356481,
+        "popularity_bias_ratio": 2.2512781765520713,
+        "recall@10": 0.018041893889200345,
+        "recall@100": 0.09392997298812497,
+        "recall@100_given_available": 0.09751322751322751,
+        "recall@10_given_available": 0.01873015873015873,
+        "recall@20": 0.03149686560318027,
+        "recall@20_given_available": 0.0326984126984127,
+        "recall@50": 0.060547372712909636,
+        "recall@50_given_available": 0.06285714285714286,
+        "recommended_mean_popularity": 59.22384180215076,
+        "target_mean_popularity": 26.306763161918354
+      },
+      "num_users": 19621,
+      "split": "test",
+      "target_catalog_availability": 0.9632536567962897
+    },
+    "validation": {
+      "catalog_size": 13923,
+      "cold_target_rate": 0.021252739411854682,
+      "confidence_intervals_95": {
+        "recall@10": {
+          "high": 0.026656388563274038,
+          "low": 0.022221089648845626
+        },
+        "recall@100": {
+          "high": 0.11956704551246113,
+          "low": 0.1105448244228123
+        },
+        "recall@20": {
+          "high": 0.04265965037459864,
+          "low": 0.03715406961928546
+        },
+        "recall@50": {
+          "high": 0.07818154018653484,
+          "low": 0.07089343050812905
+        }
+      },
+      "evaluation_mode": "full_catalog_exact_dot_product",
+      "metrics": {
+        "coverage@10": 0.7305896717661423,
+        "mrr@10": 0.007694642847030595,
+        "mrr@100": 0.010385856508895374,
+        "mrr@20": 0.008747955427085704,
+        "mrr@50": 0.009812072804390781,
+        "ndcg@10": 0.01152339593123567,
+        "ndcg@100": 0.028774784504450993,
+        "ndcg@20": 0.015403878320450431,
+        "ndcg@50": 0.022210539438820807,
+        "p50_latency_ms_batch_amortized": 0.34770976617437555,
+        "p95_latency_ms_batch_amortized": 0.5354593749871128,
+        "p95_latency_ms_single_query": 10.274189990013816,
+        "popularity_bias_ratio": 2.015884050837986,
+        "recall@10": 0.02441261913256205,
+        "recall@100": 0.11508078079608583,
+        "recall@100_given_available": 0.11757967090189544,
+        "recall@10_given_available": 0.024942720266611124,
+        "recall@20": 0.03985525712247082,
+        "recall@20_given_available": 0.040720683191001875,
+        "recall@50": 0.0745120024463585,
+        "recall@50_given_available": 0.07612997292230786,
+        "recommended_mean_popularity": 60.1192905560369,
+        "target_mean_popularity": 29.822791906630652
+      },
+      "num_users": 19621,
+      "split": "validation",
+      "target_catalog_availability": 0.9787472605881453
+    }
+  },
+  "training_history": []
+}

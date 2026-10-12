@@ -1,0 +1,73 @@
+{
+  "acceptance": {
+    "primary_ci_strictly_negative": false,
+    "primary_ci_strictly_positive": true,
+    "promote_serving_model": false
+  },
+  "bootstrap_samples": 2000,
+  "comparisons": {
+    "ndcg@10": {
+      "gru": 0.010669423284729326,
+      "gru_minus_mean": 0.002126520521166079,
+      "mean": 0.008542902763563247,
+      "paired_bootstrap_ci95": {
+        "high": 0.003399117886300675,
+        "low": 0.000843833647216363
+      }
+    },
+    "recall@10": {
+      "exact_mcnemar_p": 0.008317970237509353,
+      "gru": 0.021252739411854647,
+      "gru_minus_mean": 0.003210845522654299,
+      "gru_only_hits": 308,
+      "mean": 0.018041893889200345,
+      "mean_only_hits": 245,
+      "paired_bootstrap_ci95": {
+        "high": 0.005505580755313178,
+        "low": 0.0008154528311502981
+      }
+    },
+    "recall@100": {
+      "exact_mcnemar_p": 0.0005019320841799714,
+      "gru": 0.10188063809184038,
+      "gru_minus_mean": 0.007950665103715407,
+      "gru_only_hits": 1071,
+      "mean": 0.09392997298812497,
+      "mean_only_hits": 915,
+      "paired_bootstrap_ci95": {
+        "high": 0.012334998216196925,
+        "low": 0.00336246878344631
+      }
+    }
+  },
+  "limitations": [
+    "Single-seed architecture comparison; paired user uncertainty is not seed uncertainty",
+    "Concurrent training workloads make observed epoch times unsuitable for speed claims",
+    "Prior Video Games test exploration means this is not a new untouched benchmark",
+    "More GRU parameters confound architecture with capacity; no parameter-matched control",
+    "Other endpoints are exploratory; no multiplicity-adjusted significance claim"
+  ],
+  "models": {
+    "gru": {
+      "best_epoch": 15,
+      "epochs_run": 22,
+      "observed_epoch_seconds_sum": 1845.531372900121,
+      "parameters": 3602944,
+      "test_coverage@10": 0.4866767219708396,
+      "test_popularity_bias_ratio": 2.849038970096771
+    },
+    "mean": {
+      "best_epoch": 29,
+      "epochs_run": 30,
+      "observed_epoch_seconds_sum": 1788.6120907990262,
+      "parameters": 3577984,
+      "test_coverage@10": 0.7340372046254399,
+      "test_popularity_bias_ratio": 2.2512781765520713
+    }
+  },
+  "primary_endpoint": "test recall@100, GRU minus mean",
+  "protocol": "Identical Video Games splits and hyperparameters; validation early stopping",
+  "scope": "GRU history encoder within Two-Tower, not an exact GRU4Rec reproduction",
+  "seed": 42,
+  "users": 19621
+}

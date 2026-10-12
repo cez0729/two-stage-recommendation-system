@@ -18,12 +18,18 @@ class TwoTowerModel(nn.Module):
         dropout: float = 0.1,
         max_history: int = 20,
         temperature: float = 0.07,
+        history_encoder: str = "mean",
     ) -> None:
         super().__init__()
         self.max_history = max_history
         self.temperature = temperature
+        if history_encoder not in {"mean", "gru"}:
+            raise ValueError(f"Unsupported history encoder: {history_encoder}")
+        self.history_encoder = history_encoder
         self.user_embedding = nn.Embedding(num_users, embedding_dim)
         self.item_embedding = nn.Embedding(num_items + 1, embedding_dim, padding_idx=0)
+        if history_encoder == "gru":
+            self.history_gru = nn.GRU(embedding_dim, embedding_dim, batch_first=True)
         self.user_mlp = nn.Sequential(
             nn.Linear(embedding_dim * 2 + 1, hidden_dim),
             nn.ReLU(),
@@ -50,6 +56,15 @@ class TwoTowerModel(nn.Module):
         history_sum = (history_embeddings * mask).sum(dim=1)
         denominator = history_lengths.clamp_min(1).unsqueeze(1).to(history_sum.dtype)
         history_mean = history_sum / denominator
+        if self.history_encoder == "gru":
+            packed = nn.utils.rnn.pack_padded_sequence(
+                history_embeddings,
+                history_lengths.clamp_min(1).cpu(),
+                batch_first=True,
+                enforce_sorted=False,
+            )
+            _, hidden = self.history_gru(packed)
+            history_mean = hidden[-1] * history_lengths.gt(0).unsqueeze(1)
         normalized_length = (
             torch.log1p(history_lengths.to(history_sum.dtype))
             / torch.log1p(torch.tensor(float(self.max_history), device=history_sum.device))

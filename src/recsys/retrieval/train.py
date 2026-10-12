@@ -43,6 +43,7 @@ def _model_arguments(config: dict[str, Any], interactions: pd.DataFrame) -> dict
         "dropout": float(model["dropout"]),
         "max_history": int(model["history_length"]),
         "temperature": float(model["temperature"]),
+        "history_encoder": str(model.get("history_encoder", "mean")),
     }
 
 
@@ -178,8 +179,10 @@ def summarize_rankings(
     return result, pd.DataFrame(per_user)
 
 
-def _load_baseline_recall(model: str, split: str = "test") -> float:
-    path = Path(f"results/video_games_2018/baselines/{model}_metrics.json")
+def _load_baseline_recall(
+    model: str, split: str = "test", directory: str = "results/video_games_2018/baselines"
+) -> float:
+    path = Path(directory) / f"{model}_metrics.json"
     payload = json.loads(path.read_text(encoding="utf-8"))
     return float(payload["splits"][split]["metrics"]["recall@100"])
 
@@ -390,8 +393,9 @@ def run_training(config_path: str | Path) -> dict[str, Any]:
     np.save(item_vectors_path, exported_item_vectors)
     np.save(item_ids_path, catalog)
     comparison_split = "test" if run_test else "validation"
-    popularity_recall = _load_baseline_recall("popularity", comparison_split)
-    itemcf_recall = _load_baseline_recall("itemcf", comparison_split)
+    baseline_dir = config["data"].get("baseline_results_dir", "results/video_games_2018/baselines")
+    popularity_recall = _load_baseline_recall("popularity", comparison_split, baseline_dir)
+    itemcf_recall = _load_baseline_recall("itemcf", comparison_split, baseline_dir)
     two_tower_recall = float(split_results[comparison_split]["metrics"]["recall@100"])
     config_hash = hashlib.sha256(
         json.dumps(config, sort_keys=True, ensure_ascii=False).encode("utf-8")

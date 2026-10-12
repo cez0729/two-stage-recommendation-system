@@ -1,0 +1,43 @@
+{
+  "seed": 42,
+  "experiment_id": "musical_instruments_2018_fixed_protocol_replication",
+  "research_disclosure": "Cross-category replication using the existing Video Games protocol and fixed hyperparameters. The new category was selected for adequate catalog size before model evaluation. No claim of cross-source replication or online business impact.",
+  "data": {
+    "interactions_path": "data/processed/musical_instruments_2018/interactions.parquet",
+    "items_path": "data/processed/musical_instruments_2018/items.parquet",
+    "raw_metadata_path": "data/raw/musical_instruments_2018/meta_Musical_Instruments.json.gz",
+    "content_items_path": "data/processed/musical_instruments_2018/items_content.parquet",
+    "two_tower_checkpoint": "models/musical_instruments_2018/two_tower_v3_logq.pt"
+  },
+  "content": {
+    "max_features": 50000,
+    "min_df": 2,
+    "ngram_max": 2,
+    "max_history": 50,
+    "batch_size": 256
+  },
+  "evaluation": {
+    "splits": [
+      "validation",
+      "test"
+    ],
+    "retrieval_k": 200,
+    "report_k": 100,
+    "rrf_constant": 60,
+    "bootstrap_samples": 5000
+  },
+  "global_temporal": {
+    "validation_cutoff": "2016-01-01T00:00:00Z",
+    "final_cutoff": "2017-01-01T00:00:00Z",
+    "rationale": "Reuse the Video Games cutoffs without retuning to this category. No claim about Musical Instruments date percentiles."
+  },
+  "outputs": {
+    "metadata_audit": "results/musical_instruments_2018/phase6/metadata_audit.json",
+    "baseline_manifest": "artifacts/musical_instruments_2018/phase6/baseline_v1_manifest.json",
+    "results_dir": "results/musical_instruments_2018/phase6",
+    "vectorizer_path": "artifacts/musical_instruments_2018/phase6/tfidf_vectorizer.joblib",
+    "item_matrix_path": "artifacts/musical_instruments_2018/phase6/tfidf_item_matrix.npz",
+    "item_ids_path": "artifacts/musical_instruments_2018/phase6/tfidf_item_ids.npy",
+    "global_temporal_results": "results/musical_instruments_2018/phase6/global_temporal_experiment.json"
+  }
+}

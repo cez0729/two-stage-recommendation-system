@@ -183,6 +183,7 @@ def _collaborative_rankings(
     split: str,
     k: int,
     user_limit: int | None,
+    checkpoint_path: str = "models/video_games_2018/two_tower_v3_logq.pt",
 ) -> dict[str, list[list[int]]]:
     train = interactions[interactions["split"] == "retrieval_train"]
     popularity = PopularityRecommender().fit(train)
@@ -196,7 +197,7 @@ def _collaborative_rankings(
     ]
 
     checkpoint = torch.load(
-        "models/video_games_2018/two_tower_v3_logq.pt",
+        checkpoint_path,
         map_location="cpu",
         weights_only=False,
     )
@@ -247,6 +248,8 @@ def run(config_path: str, splits: list[str], user_limit: int | None = None) -> d
         ngram_max=int(content_config["ngram_max"]),
         max_history=int(content_config["max_history"]),
     ).fit(items, train_catalog)
+    for key in ("vectorizer_path", "item_matrix_path", "item_ids_path"):
+        Path(output[key]).parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(content.vectorizer, output["vectorizer_path"])
     sparse.save_npz(output["item_matrix_path"], content.item_matrix)
     np.save(output["item_ids_path"], content.item_ids)
@@ -289,7 +292,8 @@ def run(config_path: str, splits: list[str], user_limit: int | None = None) -> d
             batch_size=int(content_config["batch_size"]),
         )
         rankings = _collaborative_rankings(
-            interactions, histories, split, candidate_k, user_limit
+            interactions, histories, split, candidate_k, user_limit,
+            data.get("two_tower_checkpoint", "models/video_games_2018/two_tower_v3_logq.pt"),
         )
         rankings["content"] = content_rows
         combinations_by_name = {
@@ -393,13 +397,13 @@ def run(config_path: str, splits: list[str], user_limit: int | None = None) -> d
         }
 
     payload = {
-        "experiment_id": "phase6_content_tfidf_fixed_budget_v1",
+        "experiment_id": config.get("experiment_id", "phase6_content_tfidf_fixed_budget_v1"),
         "created_at_utc": datetime.now(UTC).isoformat(),
-        "research_disclosure": (
+        "research_disclosure": config.get("research_disclosure", (
             "The content direction was motivated by a previously observed test failure. "
             "Hyperparameters were fixed before this run; validation is reported first, and "
             "test is treated as confirmatory rather than an untouched discovery set."
-        ),
+        )),
         "model_scope": (
             "TF-IDF content-only baseline plus score-level RRF hybrid; this is not a trained "
             "Hybrid Item Tower."

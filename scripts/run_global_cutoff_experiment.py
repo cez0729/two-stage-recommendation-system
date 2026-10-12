@@ -10,7 +10,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from run_phase6_content import _comparison, _rrf, _summarize, _target_groups
+from run_content_retrieval import _comparison, _rrf, _summarize, _target_groups
 
 from recsys.config import load_yaml
 from recsys.evaluation.temporal import build_global_cutoff_queries

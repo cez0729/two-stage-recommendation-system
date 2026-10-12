@@ -28,6 +28,23 @@ def test_prefix_dataset_never_contains_its_target() -> None:
         assert shifted_target not in history.tolist()
 
 
+def test_gru_encoding_uses_order_and_ignores_padding() -> None:
+    torch.manual_seed(42)
+    model = TwoTowerModel(
+        num_users=2, num_items=12, embedding_dim=8, hidden_dim=16,
+        dropout=0.0, max_history=4, history_encoder="gru",
+    ).eval()
+    users = torch.tensor([0])
+    lengths = torch.tensor([2])
+    original = model.encode_users(users, torch.tensor([[1, 2, 0, 0]]), lengths)
+    reversed_ = model.encode_users(users, torch.tensor([[2, 1, 0, 0]]), lengths)
+    changed_padding = model.encode_users(users, torch.tensor([[1, 2, 3, 4]]), lengths)
+    assert not torch.allclose(original, reversed_)
+    assert torch.allclose(original, changed_padding)
+    empty = model.encode_users(users, torch.zeros((1, 4), dtype=torch.long), torch.tensor([0]))
+    assert torch.isfinite(empty).all()
+
+
 def test_two_tower_loss_is_finite_and_vectors_are_normalized() -> None:
     dataset = PrefixInteractionDataset(_toy_interactions(), max_history=5)
     model = TwoTowerModel(

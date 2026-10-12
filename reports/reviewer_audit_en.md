@@ -1,5 +1,11 @@
 # Reviewer audit: what is strong and what is still missing
 
+Extension update: the [new study](extension_study_en.md) adds Musical Instruments
+replication, a controlled mean/GRU history-encoder comparison, and multi-process
+and synthetic-catalog measurements. The audit below records the original scope;
+its single-domain and single-process descriptions refer to that earlier artifact.
+The extension report separates new findings from remaining limitations.
+
 This audit compares the repository with the evidence normally expected from a
 strong research or ML engineering recommender project. It is an assessment of
 the current artifact, not a claim of a public leaderboard ranking.

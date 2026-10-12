@@ -3,6 +3,12 @@
 These files separate model selection, frozen test evaluation, retrieval
 ablations, and serving. Paths are relative to the repository root.
 
+The [extension study](../reports/extension_study_en.md) adds isolated settings:
+`data_musical_instruments.yaml` downloads the second category, `replication/`
+reuses the original protocol there, and `sequence/` compares mean and GRU
+history encoders on Video Games. Original defaults and serving versions remain
+the same. `scripts/benchmark_scaling.py` runs the separate worker/catalog study.
+
 | Configuration | Purpose | Entry point |
 | --- | --- | --- |
 | `data.yaml` | Formal Amazon Video Games download, cleaning, and temporal split | `python -m recsys.data.download --config configs/data.yaml`, followed by `recsys.data.clean` and `recsys.data.split` |

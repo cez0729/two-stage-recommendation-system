@@ -39,6 +39,21 @@ comparison is supported by a 95% bootstrap interval and an exact McNemar test.
 See the [research notes and evidence map](reports/research_notes_en.md) for the
 failed baseline, controlled comparisons, method references, and limitations.
 
+## Extension evidence
+
+The [extension study](reports/extension_study_en.md) adds a second category,
+an ordered-history encoder comparison, and serving/index scaling measurements.
+
+| New experiment | Result and boundary |
+| --- | --- |
+| Musical Instruments, 9,249 test users | Matched Candidate Recall@200: 17.29% → 19.68%; paired 95% gain interval +1.92 to +2.87 points |
+| Fresh mean vs GRU history encoder | Video Games Recall@100: 9.39% → 10.19%; coverage@10 falls from 73.40% to 48.67%; one seed |
+| 1 vs 4 serving processes, concurrency 20 | Median 19.04 → 35.11 QPS; 3,600/3,600 requests succeed; summed RSS increases about 4x |
+
+Final ranking gains on the second category remain statistically inconclusive.
+The million-vector test measures synthetic index cost only. Released serving
+models and the original results above remain unchanged.
+
 ## Architecture
 
 ```mermaid
